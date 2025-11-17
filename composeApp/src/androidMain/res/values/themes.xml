@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="UustTheme" parent="@style/Theme.AppCompat.DayNight.NoActionBar" />
+    
+    <style name="UustSplash" parent="Theme.SplashScreen">
+        <item name="postSplashScreenTheme">@style/UustTheme</item>
+        <item name="windowSplashScreenBackground">#4d19cc</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_wrapper</item>
+    </style>
+</resources>
