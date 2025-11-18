@@ -14,14 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mrboomdev.uust.UustSettings
+import com.mrboomdev.uust.UustTheme
+import com.mrboomdev.uust.components.Holiday
 import com.mrboomdev.uust.components.ScheduleItem
 import com.mrboomdev.uust.components.ScheduleItemProgress
+import com.mrboomdev.uust.data.Holidays
 import com.mrboomdev.uust.data.api.UustTimeApi
 import com.mrboomdev.uust.data.api.UustTimeSchedule
 import com.mrboomdev.uust.observeAsState
@@ -37,6 +41,8 @@ import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import uust.composeapp.generated.resources.*
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -115,7 +121,11 @@ fun CalendarScreen(
                 modifier = Modifier.size(32.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = buttonColors,
-                onClick = {}
+                onClick = {
+                    coroutineScope.launch { 
+                        pagerState.animateScrollToPage(max(0, pagerState.currentPage - 6))
+                    }
+                }
             ) {
                 Icon(
                     modifier = Modifier
@@ -141,7 +151,12 @@ fun CalendarScreen(
                 
                 shape = RoundedCornerShape(8.dp),
                 colors = buttonColors,
-                onClick = {}
+                
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(min(pagerState.pageCount, pagerState.currentPage + 6))
+                    }
+                }
             ) {
                 Icon(
                     modifier = Modifier
@@ -215,6 +230,10 @@ fun CalendarScreen(
             val pagerEduWeek = remember(educationDay) { educationDay / 6 + 1 }
             val pagerDayOfWeek = remember(educationDay) { educationDay % 6 }
             
+            val pagerDate = remember(educationDay) { 
+                LocalDate.fromEpochDays(firstDateOfEdu.toEpochDays() + educationDay + (educationDay / 6))
+            }
+            
             val schedules by viewModel.schedules.map { schedules ->
                 schedules.filter { schedule ->
                     schedule.schedule_time_title.isNotBlank()
@@ -245,6 +264,65 @@ fun CalendarScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+
+                    style = MaterialTheme.typography.titleMedium,
+                    fontFamily = UustTheme.fonts.golos,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.secondary,
+
+                    text = buildString {
+                        append(pagerDate.day)
+                        append(" ")
+                        
+                        append(when(pagerDate.month) {
+                            Month.JANUARY -> "Января"
+                            Month.FEBRUARY -> "Февраля"
+                            Month.MARCH -> "Марта"
+                            Month.APRIL -> "Апреля"
+                            Month.MAY -> "Мая"
+                            Month.JUNE -> "Июня"
+                            Month.JULY -> "Июля"
+                            Month.AUGUST -> "Августа"
+                            Month.SEPTEMBER -> "Сентября"
+                            Month.OCTOBER -> "Октября"
+                            Month.NOVEMBER -> "Ноября"
+                            Month.DECEMBER -> "Декабря"
+                        })
+
+                        when(educationDay) {
+                            currentEduDay -> append(" (Сегодня)")
+                            currentEduDay + 1 -> append(" (Завтра)")
+                            currentEduDay - 1 -> append(" (Вчера)")
+                        }
+                    }
+                )
+
+                if(schedules.isEmpty()) {
+                    if(Holidays.all.any { holiday ->
+                        true
+                    }) {
+                        Holiday()
+                        return@HorizontalPager
+                    }
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontFamily = UustTheme.fonts.golos,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.secondary,
+                        text = "Пары отсутствуют"
+                    )
+
+                    return@HorizontalPager
+                }
+                
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
