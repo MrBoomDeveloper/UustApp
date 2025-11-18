@@ -1,12 +1,17 @@
 package com.mrboomdev.uust.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,37 +27,49 @@ fun LunchItem(
     imageScale: Float = 1f,
     name: String,
     price: String,
+    onClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.width(112.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+    Surface(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp)),
+        onClick = onClick
     ) {
-        AsyncImage(
+        Column(
             modifier = Modifier
-                .padding(bottom = 8.dp)
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .scale(imageScale),
-            
-            model = image,
-            contentDescription = null
-        )
-        
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
-            fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
-            text = name
-        )
+                .width(96.dp)
+                .padding(bottom = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White)
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .scale(imageScale),
 
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-            fontFamily = FontFamily(Font(Res.font.golos_text_regular)),
-            text = price
-        )
+                model = image,
+                contentDescription = null
+            )
+
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+                fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
+                text = name
+            )
+
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodySmall,
+                fontFamily = FontFamily(Font(Res.font.golos_text_regular)),
+                color = MaterialTheme.colorScheme.secondary,
+                text = price
+            )
+        }
     }
 }

@@ -10,12 +10,16 @@ import uust.composeapp.generated.resources.*
 
 object UustTheme {
     fun darkColorScheme() = androidx.compose.material3.darkColorScheme(
-        primary = Color(0xFF794BF6),
+        primary = Color(0xFF966FFF),
+        primaryContainer = Color(0xFF6221C9),
         onPrimary = Color.White,
         secondary = Color(0xFFcbb8ff),
         onSurfaceVariant = Color(0xFF737187),
         secondaryContainer = Color(0xFFBDA8E7),
-        onSecondaryContainer = Color(0xFF1A005A)
+        onSecondaryContainer = Color(0xFF1A005A),
+        background = Color(0xFF0D071A),
+        surface = Color(0xFF110823),
+        surfaceContainer = Color(0xFF281742)
     )
     
     fun lightColorScheme() = androidx.compose.material3.lightColorScheme(

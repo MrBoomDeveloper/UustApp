@@ -301,6 +301,17 @@ fun App() {
 
                             actions = {
                                 IconButton(
+                                    onClick = {}
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(32.dp),
+                                        painter = painterResource(Res.drawable.ic_search),
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        contentDescription = null
+                                    )
+                                }
+                                
+                                IconButton(
                                     onClick = {
                                         showWarning = true
                                     }

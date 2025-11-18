@@ -1,5 +1,6 @@
 package com.mrboomdev.uust.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -25,7 +26,6 @@ import com.mrboomdev.uust.data.api.UustTimeApi
 import com.mrboomdev.uust.data.api.UustTimeSchedule
 import com.mrboomdev.uust.observeAsState
 import com.mrboomdev.uust.utils.collectAsStateAndCache
-import com.mrboomdev.uust.utils.getEducationWeek
 import com.mrboomdev.uust.utils.toLocalDate
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,6 +52,18 @@ class CalendarViewModel: ViewModel() {
 }
 
 @OptIn(ExperimentalTime::class)
+private val initDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+@OptIn(ExperimentalTime::class)
+private val firstDateOfEdu = if(initDate.month >= Month.SEPTEMBER) {
+    LocalDate(initDate.year, Month.SEPTEMBER, 1)
+} else LocalDate(initDate.year - 1, Month.SEPTEMBER, 1)
+
+private val lastDateOfEdu = if(initDate.month >= Month.SEPTEMBER) {
+    LocalDate(initDate.year + 1, Month.SEPTEMBER, 1)
+} else LocalDate(initDate.year, Month.SEPTEMBER, 1)
+
+@OptIn(ExperimentalTime::class)
 @Composable
 fun CalendarScreen(
     viewModel: CalendarViewModel = viewModel { CalendarViewModel() },
@@ -59,55 +71,25 @@ fun CalendarScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var currentTime by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())) }
-    val currentDate = remember(currentTime) { currentTime.toLocalDate() }
-    
-    val pagerState = rememberPagerState(
-        initialPage = (currentDate.getEducationWeek() * 7) + currentDate.dayOfWeek.ordinal + 1
-    ) { 
-        365
-    }
-    
-    
-    
-    
-    
-    val currentEducationWeek = remember(currentTime) { currentTime.toLocalDate().getEducationWeek() }
-    val currentDayOfWeek = remember(currentTime) { currentTime.dayOfWeek.ordinal + 1 }
-
-    val schedules by viewModel.schedules.map { schedules ->
-        schedules.filter { schedule ->
-            schedule.schedule_weekday_id == currentDayOfWeek
-                    && schedule.schedule_weeks.any { it.toInt() == currentEducationWeek }
-        }.map { schedule ->
-            schedule to ScheduleInfo(
-                timeFrom = LocalTime.parse(schedule.schedule_time_title.substringBefore("-")),
-                timeTo = LocalTime.parse(schedule.schedule_time_title.substringAfter("-"))
-            )
-        }
-    }.collectAsStateAndCache(emptyList())
-
-    val currentSchedule = remember(currentTime, schedules) {
-        val predicate: (Pair<UustTimeSchedule, ScheduleInfo>) -> Boolean = { (_, scheduleInfo) ->
-            val startMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute
-            val currentMinute = currentTime.hour * 60 + currentTime.minute
-            startMinute >= currentMinute
-        }
-
-        schedules.firstOrNull(predicate)?.first?.let { schedule ->
-            schedule to schedules.indexOfFirst(predicate)
-        }
-    }
-    
     val useOutlinedSchedule by UustSettings.outlinedSchedule.observeAsState()
     
-    val selectedTime = remember(pagerState.currentPage) { LocalDate.fromEpochDays(pagerState.currentPage) }
-    val selectedEducationWeek = remember(selectedTime) { selectedTime.getEducationWeek() }
-    val selectedDayOfWeek = 1
-
+    fun getInitialDay(): Int {
+        return firstDateOfEdu.daysUntil(currentTime.toLocalDate()).toFloat().div(7f).times(6f).toInt() + 1
+    }
+    
+    val pagerState = rememberPagerState(
+        initialPage = getInitialDay(),
+        pageCount = { (365.toFloat() / 7 * 6).toInt() }
+    )
+    
+    val currentEduDay = remember(currentTime) { getInitialDay() }
+    val selectedEduWeek = remember(pagerState.currentPage) { pagerState.currentPage / 6 }
+    val selectedDayOfWeek = remember(pagerState.currentPage) { pagerState.currentPage % 6 }
+    
     LaunchedEffect(Unit) {
         while(true) {
-            delay(10_000)
             currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            delay(10_000)
         }
     }
     
@@ -119,6 +101,7 @@ fun CalendarScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -148,7 +131,7 @@ fun CalendarScreen(
                 fontSize = 24.sp,
                 color = MaterialTheme.colorScheme.primary,
                 fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
-                text = "Неделя $selectedEducationWeek"
+                text = "Неделя ${selectedEduWeek + 1}"
             )
 
             FilledIconButton(
@@ -176,7 +159,11 @@ fun CalendarScreen(
                 modifier = Modifier.size(32.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = buttonColors,
-                onClick = {}
+                onClick = {
+                    coroutineScope.launch { 
+                        pagerState.animateScrollToPage(getInitialDay())
+                    }
+                }
             ) {
                 Icon(
                     modifier = Modifier
@@ -190,28 +177,30 @@ fun CalendarScreen(
         }
         
         PrimaryTabRow(
-            selectedTabIndex = selectedDayOfWeek - 1,
+            selectedTabIndex = selectedDayOfWeek,
             divider = {
                 HorizontalDivider(Modifier.alpha(.25f))
             }
         ) {
-            for(i in 1..6) {
+            for(i in 0..5) {
                 Tab(
                     selected = i == selectedDayOfWeek,
                     onClick = {
-                        
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + (i - selectedDayOfWeek))
+                        }
                     }
                 ) {
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp),
                         fontFamily = FontFamily(Font(Res.font.golos_text_medium)),
                         text = when(i) {
-                            1 -> "ПН"
-                            2 -> "ВТ"
-                            3 -> "СР"
-                            4 -> "ЧТ"
-                            5 -> "ПТ"
-                            6 -> "СБ"
+                            0 -> "ПН"
+                            1 -> "ВТ"
+                            2 -> "СР"
+                            3 -> "ЧТ"
+                            4 -> "ПТ"
+                            5 -> "СБ"
                             else -> i.toString()
                         }
                     )
@@ -223,13 +212,39 @@ fun CalendarScreen(
             modifier = Modifier.fillMaxSize(),
             state = pagerState
         ) { educationDay ->
+            val pagerEduWeek = remember(educationDay) { educationDay / 6 + 1 }
+            val pagerDayOfWeek = remember(educationDay) { educationDay % 6 }
+            
+            val schedules by viewModel.schedules.map { schedules ->
+                schedules.filter { schedule ->
+                    schedule.schedule_time_title.isNotBlank()
+                            && schedule.schedule_weekday_id == pagerDayOfWeek + 1
+                            && schedule.schedule_weeks.any { it.toInt() == pagerEduWeek }
+                }.map { schedule ->
+                    schedule to ScheduleInfo(
+                        timeFrom = LocalTime.parse(schedule.schedule_time_title.substringBefore("-")),
+                        timeTo = LocalTime.parse(schedule.schedule_time_title.substringAfter("-"))
+                    )
+                }
+            }.collectAsStateAndCache(emptyList())
+
+            val currentSchedule = remember(currentTime, schedules) {
+                val predicate: (Pair<UustTimeSchedule, ScheduleInfo>) -> Boolean = { (schedule, scheduleInfo) ->
+                    val startMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute
+                    val currentMinute = currentTime.hour * 60 + currentTime.minute
+                    startMinute >= currentMinute && educationDay == currentEduDay
+                }
+
+                schedules.firstOrNull(predicate)?.first?.let { schedule ->
+                    schedule to schedules.indexOfFirst(predicate)
+                }
+            }
+            
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                Text("Education day #${educationDay}")
-
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -249,7 +264,7 @@ fun CalendarScreen(
                             name = schedule.schedule_subject_title,
                             note = schedule.comment.takeIf { it.isNotBlank() },
                             location = "${schedule.building_short_title} ${schedule.room_title}",
-                            teacher = schedule.teacher_fullname,
+                            teacher = schedule.teacher_fullname.takeUnless { it.isBlank() },
 
                             footer = ((startMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L }?.let { timeBeforeBeginning ->
                                 buildString {

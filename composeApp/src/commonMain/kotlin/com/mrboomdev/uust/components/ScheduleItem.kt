@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mrboomdev.uust.data.SubjectIcons
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import uust.composeapp.generated.resources.*
@@ -129,11 +131,50 @@ fun ScheduleItem(
                 )
             }
 
-            Text(
-                style = MaterialTheme.typography.bodyLarge,
-                fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
-                text = name
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                val fontStyle = MaterialTheme.typography.bodyLarge
+                val subjectIcon = SubjectIcons[name]
+                
+                Text(
+                    style = fontStyle,
+                    fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
+                    
+                    inlineContent = mapOf(
+                        "icon" to InlineTextContent(
+                            placeholder = Placeholder(
+                                width = fontStyle.fontSize,
+                                height = fontStyle.fontSize,
+                                placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                            )
+                        ) {
+                            if(subjectIcon != null) {
+                                Icon(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .scale(1.4f * subjectIcon.iconScale),
+                                    
+                                    painter = painterResource(if(progress == ScheduleItemProgress.NOW) {
+                                        subjectIcon.activeIcon
+                                    } else subjectIcon.icon),
+                                    
+                                    contentDescription = null
+                                )
+                            }
+                        }
+                    ),
+                    
+                    text = buildAnnotatedString { 
+                        if(subjectIcon != null) {
+                            appendInlineContent("icon")
+                            append("  ")
+                        }
+                        
+                        append(name)
+                    }
+                )
+            }
 
             Spacer(Modifier.weight(1f, false))
 
