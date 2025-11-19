@@ -4,7 +4,6 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -25,11 +24,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
-import com.mrboomdev.uust.screens.CalendarScreen
-import com.mrboomdev.uust.screens.HomeScreen
-import com.mrboomdev.uust.screens.MapScreen
-import com.mrboomdev.uust.screens.WarningScreen
-import com.mrboomdev.uust.utils.BackEffect
+import com.mrboomdev.uust.screens.*
 import com.mrboomdev.uust.utils.add
 import com.mrboomdev.uust.utils.iterateIndexed
 import kotlinx.coroutines.launch
@@ -73,6 +68,21 @@ val LocalBackStack = compositionLocalOf<MutableList<Routes>> {
 
 @Serializable
 sealed interface Routes: NavKey {
+    @Serializable
+    data object Welcome: Routes {
+        @Composable
+        override fun Content(
+            contentPadding: PaddingValues
+        ) = WelcomeScreen(contentPadding = contentPadding)
+    }
+    
+    data object Settings: Routes {
+        @Composable
+        override fun Content(contentPadding: PaddingValues) {
+            SettingsScreen(contentPadding)
+        }
+    }
+    
     @Serializable
     data object Home: Routes {
         @Composable
@@ -127,12 +137,7 @@ private fun MutableMap<Int, MutableList<Routes>>.getBackStack(index: Int): Mutab
 @Composable
 @Preview
 fun App() {
-    MaterialTheme(
-        colorScheme = when(isSystemInDarkTheme()) {
-            true -> UustTheme.darkColorScheme()
-            false -> UustTheme.lightColorScheme()
-        }
-    ) {
+    UustTheme {
         val topAppBarBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val bottomAppBarBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
         val coroutineScope = rememberCoroutineScope()
@@ -144,20 +149,6 @@ fun App() {
 
         val backStacks by rememberSerializable<MutableMap<Int, MutableList<Routes>>> {
             mutableStateOf(mutableMapOf())
-        }
-        
-        if(showWarning) {
-            BackEffect {
-                showWarning = false
-            }
-
-            WarningScreen(
-                onDismissRequest = {
-                    showWarning = false
-                }
-            )
-            
-            return@MaterialTheme
         }
         
         Row(Modifier.fillMaxSize()) {
@@ -313,7 +304,9 @@ fun App() {
                                 
                                 IconButton(
                                     onClick = {
-                                        showWarning = true
+                                        backStacks.getBackStack(
+                                            pagerState.currentPage
+                                        ) += Routes.Settings
                                     }
                                 ) {
                                     Icon(

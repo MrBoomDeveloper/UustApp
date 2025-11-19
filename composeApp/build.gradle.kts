@@ -69,6 +69,9 @@ kotlin {
 
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
+            
+            // For map rendering
+            implementation("com.badlogicgames.gdx:gdx:1.14.0")
         }
 
         val mobileMain by creating {

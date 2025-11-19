@@ -1,12 +1,39 @@
 package com.mrboomdev.uust
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import org.jetbrains.compose.resources.Font
 import uust.composeapp.generated.resources.*
+
+@Composable
+fun isDarkTheme(): Boolean {
+    val isSystemDark = isSystemInDarkTheme()
+    val preferenceValue by UustSettings.themeMode.observeAsState()
+    
+    return when(preferenceValue) {
+        UustSettings.ThemeMode.SYSTEM -> isSystemDark
+        UustSettings.ThemeMode.LIGHT -> false
+        UustSettings.ThemeMode.DARK -> true
+    }
+}
+
+@Composable
+fun UustTheme(
+    isDarkTheme: Boolean = isDarkTheme(),
+    content: @Composable () -> Unit
+) = MaterialTheme(
+    colorScheme = if(isDarkTheme) {
+        UustTheme.darkColorScheme()
+    } else UustTheme.lightColorScheme(),
+    
+    content = content
+)
 
 object UustTheme {
     fun darkColorScheme() = androidx.compose.material3.darkColorScheme(

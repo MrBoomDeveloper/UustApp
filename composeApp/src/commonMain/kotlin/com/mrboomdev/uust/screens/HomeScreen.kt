@@ -256,28 +256,86 @@ fun HomeScreen(
                         }
                     )
 
-                    FilledIconButton(
-                        modifier = Modifier.size(32.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        
-                        colors = IconButtonDefaults.filledIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ),
-                        
-                        onClick = {
-                            backStack += Routes.Calendar
-                        }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Icon(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(8.dp)
-                                .scale(scaleX = -1f, scaleY = 1f),
+                        FilledIconButton(
+                            modifier = Modifier.size(32.dp),
+                            shape = RoundedCornerShape(8.dp),
 
-                            painter = painterResource(Res.drawable.ic_back),
-                            contentDescription = null
-                        )
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            ),
+
+                            onClick = {
+                                UustSettings.outlinedSchedule.toggle()
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp)
+                                    .scale(scaleX = -1f, scaleY = 1f),
+
+                                painter = painterResource(if(useOutlinedSchedule) { 
+                                    Res.drawable.ic_outline 
+                                } else Res.drawable.ic_filled),
+                                    
+                                contentDescription = null
+                            )
+                        }
+
+                        FilledIconButton(
+                            modifier = Modifier.size(32.dp),
+                            shape = RoundedCornerShape(8.dp),
+
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            ),
+
+                            onClick = {
+                                UustSettings.scheduleInRow.toggle()
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp)
+                                    .scale(scaleX = -1f, scaleY = 1f),
+
+                                painter = painterResource(if(showScheduleInRow) { 
+                                    Res.drawable.ic_view_week_outlined 
+                                } else Res.drawable.ic_table_rows_outlined),
+                                    
+                                contentDescription = null
+                            )
+                        }
+                            
+                        FilledIconButton(
+                            modifier = Modifier.size(32.dp),
+                            shape = RoundedCornerShape(8.dp),
+
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                contentColor = MaterialTheme.colorScheme.primary
+                            ),
+
+                            onClick = {
+                                backStack += Routes.Calendar
+                            }
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp)
+                                    .scale(scaleX = -1f, scaleY = 1f),
+
+                                painter = painterResource(Res.drawable.ic_back),
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
 
@@ -295,79 +353,6 @@ fun HomeScreen(
                     text = "${currentTime.toLocalDate().getEducationWeek()} НЕДЕЛЯ"
                 )
             }
-            
-//            CatHeader(
-//                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-//                icon = painterResource(Res.drawable.ic_calendar_today_outlined),
-//                title = "Расписание"
-//            ) {
-//                IconButton(
-//                    modifier = Modifier
-//                        .size(24.dp)
-//                        .scale(2f),
-//
-//                    onClick = {
-//                        UustSettings.outlinedSchedule.toggle()
-//                    }
-//                ) {
-//                    Icon(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(6.dp),
-//
-//                        painter = painterResource(if(useOutlinedSchedule) {
-//                            Res.drawable.ic_outline
-//                        } else Res.drawable.ic_filled),
-//
-//                        tint = MaterialTheme.colorScheme.primary,
-//                        contentDescription = null
-//                    )
-//                }
-//                
-//                IconButton(
-//                    modifier = Modifier
-//                        .size(24.dp)
-//                        .scale(2f),
-//
-//                    onClick = {
-//                        UustSettings.scheduleInRow.toggle()
-//                    }
-//                ) {
-//                    Icon(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(6.dp),
-//
-//                        painter = painterResource(if(showScheduleInRow) {
-//                            Res.drawable.ic_view_week_outlined
-//                        } else Res.drawable.ic_table_rows_outlined),
-//
-//                        tint = MaterialTheme.colorScheme.primary,
-//                        contentDescription = null
-//                    )
-//                }
-//
-//                IconButton(
-//                    modifier = Modifier
-//                        .size(24.dp)
-//                        .scale(2f),
-//
-//                    onClick = {
-//                        backStack += Routes.Calendar
-//                    }
-//                ) {
-//                    Icon(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .padding(7.dp)
-//                            .scale(scaleX = -1f, scaleY = 1f),
-//
-//                        painter = painterResource(Res.drawable.ic_back),
-//                        tint = MaterialTheme.colorScheme.primary,
-//                        contentDescription = null
-//                    )
-//                }
-//            }
         }
         
         if(isHoliday) {

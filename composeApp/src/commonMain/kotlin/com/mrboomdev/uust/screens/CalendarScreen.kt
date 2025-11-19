@@ -30,6 +30,7 @@ import com.mrboomdev.uust.data.api.UustTimeApi
 import com.mrboomdev.uust.data.api.UustTimeSchedule
 import com.mrboomdev.uust.observeAsState
 import com.mrboomdev.uust.utils.collectAsStateAndCache
+import com.mrboomdev.uust.utils.ifThen
 import com.mrboomdev.uust.utils.toLocalDate
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -262,7 +263,9 @@ fun CalendarScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    .ifThen(schedules.isNotEmpty()) { 
+                        verticalScroll(rememberScrollState()) 
+                    }
             ) {
                 Text(
                     modifier = Modifier
@@ -311,7 +314,7 @@ fun CalendarScreen(
 
                     Text(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .weight(1f)
                             .wrapContentSize(Alignment.Center),
                         style = MaterialTheme.typography.titleMedium,
                         fontFamily = UustTheme.fonts.golos,
