@@ -12,12 +12,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import io.github.skeptick.libres.LibresSettings
 
 class MainActivity : ComponentActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(newBase)
         Uust.setContext(newBase)
+        LibresSettings.languageCode = "ru"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

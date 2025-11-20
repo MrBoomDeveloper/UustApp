@@ -129,6 +129,7 @@ fun HomeScreen(
     
     val showScheduleInRow by UustSettings.scheduleInRow.observeAsState()
     val useOutlinedSchedule by UustSettings.outlinedSchedule.observeAsState()
+    val hideClubAds by UustSettings.hideClubAds.observeAsState()
     val scheduleListState = rememberLazyListState()
     
     val isHoliday = remember(currentTime) {
@@ -400,7 +401,7 @@ fun HomeScreen(
                                 name = schedule.schedule_subject_title,
                                 note = schedule.comment.takeIf { it.isNotBlank() },
                                 location = "${schedule.building_short_title}/${schedule.room_title}",
-                                teacher = schedule.teacher_fullname,
+                                teacher = schedule.teacher_fullname.takeUnless { it.isBlank() },
 
                                 footer = ((startMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L }?.let { timeBeforeBeginning ->
                                     buildString {
@@ -460,7 +461,7 @@ fun HomeScreen(
                                 name = schedule.schedule_subject_title,
                                 note = schedule.comment.takeIf { it.isNotBlank() },
                                 location = "${schedule.building_short_title}/${schedule.room_title}",
-                                teacher = schedule.teacher_fullname,
+                                teacher = schedule.teacher_fullname.takeUnless { it.isBlank() },
 
                                 footer = ((startMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L }?.let { timeBeforeBeginning ->
                                     buildString {
@@ -504,95 +505,101 @@ fun HomeScreen(
             }
         }
 
-        item(
-            key = "clubAdsHeader",
-            contentType = "header"
-        ) {
-            CatHeader(
-                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
-                icon = painterResource(Res.drawable.ic_sentiment_very_satisfied_outlined),
-                title = "Интересное"
+        if(!hideClubAds) {
+            item(
+                key = "clubAdsHeader",
+                contentType = "header"
             ) {
-                FilledIconButton(
-                    modifier = Modifier.size(32.dp),
-                    shape = RoundedCornerShape(8.dp),
-
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        contentColor = MaterialTheme.colorScheme.primary
-                    ),
-
-                    onClick = {
-//                        backStack += Routes.Calendar
-                    }
+                CatHeader(
+                    modifier = Modifier
+                        .padding(top = 12.dp, bottom = 8.dp)
+                        .animateItem(),
+                    icon = painterResource(Res.drawable.ic_sentiment_very_satisfied_outlined),
+                    title = "Интересное"
                 ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(6.dp)
-                            .scale(scaleX = -1f, scaleY = 1f),
+                    FilledIconButton(
+                        modifier = Modifier.size(32.dp),
+                        shape = RoundedCornerShape(8.dp),
 
-                        painter = painterResource(Res.drawable.ic_close),
-                        contentDescription = null
-                    )
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        ),
+
+                        onClick = {
+                            UustSettings.hideClubAds.set(true)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(6.dp)
+                                .scale(scaleX = -1f, scaleY = 1f),
+
+                            painter = painterResource(Res.drawable.ic_close),
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }
         
-        item(
-            key = "clubAds",
-            contentType = "ads"
-        ) {
-            Surface(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                color = MaterialTheme.colorScheme.primaryContainer,
-                onClick = {}
-            ) { 
-                Box(
+        if(!hideClubAds) {
+            item(
+                key = "clubAds",
+                contentType = "ads"
+            ) {
+                Surface(
                     modifier = Modifier
-                        .height(112.dp)
+                        .padding(horizontal = 16.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .animateItem(),
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    onClick = {}
                 ) {
-                    Row {
-                        Box(
-                            Modifier
-                                .fillMaxHeight()
-                                .aspectRatio(1f)
-                                .clipToBounds()
-                        ) {
-                            Image(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .rotate(10f)
-                                    .scale(1.2f),
-                                painter = painterResource(Res.drawable.clubs),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        
-                        Column(
-                            modifier = Modifier
-                                .padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 12.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                fontFamily = UustTheme.fonts.golos,
-                                text = "Вступай в клубы!"
-                            )
+                    Box(
+                        modifier = Modifier
+                            .height(112.dp)
+                    ) {
+                        Row {
+                            Box(
+                                Modifier
+                                    .fillMaxHeight()
+                                    .aspectRatio(1f)
+                                    .clipToBounds()
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .rotate(10f)
+                                        .scale(1.2f),
+                                    painter = painterResource(Res.drawable.clubs),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
 
-                            Text(
-                                fontSize = 15.sp,
-                                fontFamily = UustTheme.fonts.golos,
-                                overflow = TextOverflow.Ellipsis,
-                                text = "Проводи свободное время занимаясь любимым делом"
-                            )
+                            Column(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 12.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontFamily = UustTheme.fonts.golos,
+                                    text = "Вступай в клубы!"
+                                )
+
+                                Text(
+                                    fontSize = 15.sp,
+                                    fontFamily = UustTheme.fonts.golos,
+                                    overflow = TextOverflow.Ellipsis,
+                                    text = "Проводи свободное время занимаясь любимым делом"
+                                )
+                            }
                         }
-                    }
-                    
+
 //                    IconButton(
 //                        onClick = {}
 //                    ) {
@@ -600,6 +607,7 @@ fun HomeScreen(
 //                            painter = painterResource(Res.drawable.clos)
 //                        )
 //                    }
+                    }
                 }
             }
         }

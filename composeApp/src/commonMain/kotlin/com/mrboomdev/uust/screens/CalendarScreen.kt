@@ -22,10 +22,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mrboomdev.uust.UustSettings
 import com.mrboomdev.uust.UustTheme
-import com.mrboomdev.uust.components.Holiday
 import com.mrboomdev.uust.components.ScheduleItem
 import com.mrboomdev.uust.components.ScheduleItemProgress
-import com.mrboomdev.uust.data.Holidays
 import com.mrboomdev.uust.data.api.UustTimeApi
 import com.mrboomdev.uust.data.api.UustTimeSchedule
 import com.mrboomdev.uust.observeAsState
@@ -39,6 +37,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlinx.datetime.format.char
+import nl.jacobras.humanreadable.HumanReadable
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import uust.composeapp.generated.resources.*
@@ -46,6 +45,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class CalendarViewModel: ViewModel() {
     private val _schedules = MutableStateFlow(emptyList<UustTimeSchedule>())
@@ -305,12 +305,12 @@ fun CalendarScreen(
                 )
 
                 if(schedules.isEmpty()) {
-                    if(Holidays.all.any { holiday ->
-                        true
-                    }) {
-                        Holiday()
-                        return@HorizontalPager
-                    }
+//                    if(Holidays.all.any { holiday ->
+//                        true
+//                    }) {
+//                        Holiday()
+//                        return@HorizontalPager
+//                    }
 
                     Text(
                         modifier = Modifier
@@ -330,8 +330,9 @@ fun CalendarScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     schedules.forEach { (schedule, scheduleInfo) ->
-                        val startMinute = scheduleInfo.timeFrom.hour * 60 + scheduleInfo.timeFrom.minute
-                        val endMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute
+                        val daysDiffInMinutes = (educationDay - currentEduDay) * 24 * 60
+                        val startMinute = scheduleInfo.timeFrom.hour * 60 + scheduleInfo.timeFrom.minute + daysDiffInMinutes
+                        val endMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute + daysDiffInMinutes
                         val currentMinute = currentTime.hour * 60 + currentTime.minute
 
                         ScheduleItem(
@@ -350,14 +351,12 @@ fun CalendarScreen(
                             footer = ((startMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L }?.let { timeBeforeBeginning ->
                                 buildString {
                                     append("До начала: ")
-
-                                    append(LocalTime.fromMillisecondOfDay(
-                                        timeBeforeBeginning.toInt()
-                                    ).format(LocalTime.Format {
-                                        hour()
-                                        char(':')
-                                        minute()
-                                    }))
+                                    
+                                    append(
+                                        HumanReadable.timeAgo(
+                                        Instant.fromEpochSeconds(startMinute.toLong() * 60), 
+                                        Instant.fromEpochSeconds(currentMinute.toLong() * 60))
+                                    )
                                 }
                             } ?: ((endMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L && it < 80 * 60 * 1000 }?.let { timeBeforeEnd ->
                                 buildString {
@@ -374,6 +373,8 @@ fun CalendarScreen(
                             },
 
                             progress = when {
+                                educationDay > currentEduDay -> ScheduleItemProgress.SOON
+                                educationDay < currentEduDay -> ScheduleItemProgress.COMPLETED
                                 currentMinute > endMinute -> ScheduleItemProgress.COMPLETED
                                 schedule == currentSchedule?.first -> ScheduleItemProgress.NOW
                                 else -> ScheduleItemProgress.SOON

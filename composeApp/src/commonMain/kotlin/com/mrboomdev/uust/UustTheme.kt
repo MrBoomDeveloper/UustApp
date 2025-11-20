@@ -39,7 +39,7 @@ object UustTheme {
     fun darkColorScheme() = androidx.compose.material3.darkColorScheme(
         primary = Color(0xFF966FFF),
         primaryContainer = Color(0xFF6221C9),
-        onPrimary = Color.White,
+        onPrimary = Color.Black,
         secondary = Color(0xFFcbb8ff),
         onSurfaceVariant = Color(0xFF737187),
         secondaryContainer = Color(0xFFBDA8E7),
