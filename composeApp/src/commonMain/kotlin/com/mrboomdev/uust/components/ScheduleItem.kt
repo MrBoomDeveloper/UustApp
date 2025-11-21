@@ -56,7 +56,7 @@ enum class ScheduleItemProgress {
 }
 
 @Composable
-fun ScheduleItem(
+fun SchedulePreview(
     modifier: Modifier = Modifier.width(250.dp),
     type: String,
     progress: ScheduleItemProgress,

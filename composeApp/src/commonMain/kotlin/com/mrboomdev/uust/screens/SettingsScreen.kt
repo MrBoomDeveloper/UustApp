@@ -12,9 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.mrboomdev.uust.UustSettings
 import com.mrboomdev.uust.UustTheme
-import com.mrboomdev.uust.observeAsState
+import com.mrboomdev.uust.data.settings.UustSettings
+import com.mrboomdev.uust.data.settings.observeAsState
 
 @Composable
 fun SettingsScreen(

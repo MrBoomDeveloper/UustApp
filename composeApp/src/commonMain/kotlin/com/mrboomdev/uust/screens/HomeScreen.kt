@@ -35,12 +35,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mrboomdev.uust.*
+import com.mrboomdev.uust.LocalBackStack
+import com.mrboomdev.uust.UustTheme
 import com.mrboomdev.uust.components.*
 import com.mrboomdev.uust.data.Holidays
 import com.mrboomdev.uust.data.api.UustTimeApi
 import com.mrboomdev.uust.data.api.UustTimeSchedule
+import com.mrboomdev.uust.data.settings.UustSettings
+import com.mrboomdev.uust.data.settings.observeAsState
+import com.mrboomdev.uust.isDarkTheme
+import com.mrboomdev.uust.navigation.Routes
 import com.mrboomdev.uust.utils.collectAsStateAndCache
+import com.mrboomdev.uust.utils.firstAndIndexOrNull
 import com.mrboomdev.uust.utils.getEducationWeek
 import com.mrboomdev.uust.utils.toLocalDate
 import kotlinx.coroutines.delay
@@ -116,19 +122,19 @@ fun HomeScreen(
     }.collectAsStateAndCache(emptyList())
 
     val currentSchedule = remember(currentTime, schedules) {
-        val predicate: (Pair<UustTimeSchedule, ScheduleInfo>) -> Boolean = { (schedule, scheduleInfo) ->
+        schedules.firstAndIndexOrNull { (_, scheduleInfo) ->
             val startMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute
             val currentMinute = currentTime.hour * 60 + currentTime.minute
             startMinute >= currentMinute
         }
-        
-        schedules.firstOrNull(predicate)?.first?.let { schedule ->
-            schedule to schedules.indexOfFirst(predicate)
-        }
     }
+
+    val useOutlinedSchedule by UustSettings.outlinedSchedule.observeAsState(
+        // It looks ugly in the dark theme
+        defaultValue = !isDarkTheme()
+    )
     
     val showScheduleInRow by UustSettings.scheduleInRow.observeAsState()
-    val useOutlinedSchedule by UustSettings.outlinedSchedule.observeAsState()
     val hideClubAds by UustSettings.hideClubAds.observeAsState()
     val scheduleListState = rememberLazyListState()
     
@@ -392,7 +398,7 @@ fun HomeScreen(
                             val endMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute
                             val currentMinute = currentTime.hour * 60 + currentTime.minute
 
-                            ScheduleItem(
+                            SchedulePreview(
                                 modifier = Modifier.offset(x = 8.dp).width(250.dp),
                                 outlined = useOutlinedSchedule,
                                 type = schedule.type,
@@ -450,7 +456,7 @@ fun HomeScreen(
                             val endMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute
                             val currentMinute = currentTime.hour * 60 + currentTime.minute
 
-                            ScheduleItem(
+                            SchedulePreview(
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp)
                                     .fillMaxWidth(),
@@ -508,7 +514,8 @@ fun HomeScreen(
         if(!hideClubAds) {
             item(
                 key = "clubAdsHeader",
-                contentType = "header"
+                contentType = "header",
+                span = { GridItemSpan(maxLineSpan) }
             ) {
                 CatHeader(
                     modifier = Modifier
@@ -547,7 +554,8 @@ fun HomeScreen(
         if(!hideClubAds) {
             item(
                 key = "clubAds",
-                contentType = "ads"
+                contentType = "ads",
+                span = { GridItemSpan(maxLineSpan) }
             ) {
                 Surface(
                     modifier = Modifier
@@ -614,7 +622,8 @@ fun HomeScreen(
         
         item(
             key = "lunchHeader",
-            contentType = "header"
+            contentType = "header",
+            span = { GridItemSpan(maxLineSpan) }
         ) {
             CatHeader(
                 modifier = Modifier.padding(top = 8.dp, bottom = 12.dp),
@@ -713,23 +722,23 @@ fun HomeScreen(
             val items = remember {
                 listOf(
                     "Подписки" to Res.drawable.ic_subscriptions_outlined,
-                    "Жизнь университета" to null,
+                    "Жизнь университета" to Res.drawable.ic_school_outlined,
                     "Наука" to Res.drawable.ic_science_outlined,
-                    "Научный полк" to null,
-                    "Студентам" to null,
+//                    "Научный полк" to null,
+                    "Студентам" to Res.drawable.ic_diversity_3,
                     "Стипендия" to Res.drawable.ic_money,
-                    "Социальная поддержка" to null,
+                    "Социальная поддержка" to Res.drawable.ic_support_outlined,
                     "Общежития" to Res.drawable.ic_home_outlined,
                     "Спорт" to Res.drawable.ic_football_outlined,
                     "Отдых и досуг" to null,
                     "Трудоустройство" to null,
-                    "Сотрудникам" to null,
+//                    "Сотрудникам" to null,
                     "Рейтинги" to null,
                     "Награды" to null,
                     "Партнерство" to null,
                     "СМИ о нас" to null,
-                    "Лонгриды" to null,
-                    "Другое" to null
+//                    "Лонгриды" to null,
+//                    "Другое" to null
                 )
             }
             
@@ -780,11 +789,12 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp),
-                banner = "https://uust.ru/media/press-center/news/covers/2025/10/2025-10-29_11-45-45.webp",
-                title = "\"Я - профессионал\": об олимпиаде и ценности профессионализма рассказывает студентка УУНиТ",
-                category = "Олимпиады",
+                banner = "https://uust.ru/media/press-center/news/covers/2025/11/2025-11-20_16-26-26.webp",
+                title = "Добро в действии: студенты УУНиТ разработали проекты волонтерского центра нового поколения",
+                category = "Жизнь университета",
                 categoryColor = Color(0xFFFF6C20),
-                date = "29 Окт, 11:45",
+                categoryIcon = Res.drawable.ic_school_outlined,
+                date = "20 Ноя, 16:26",
                 onClick = {}
             )
         }
@@ -798,31 +808,31 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp),
-                banner = "https://uust.ru/media/press-center/news/covers/2025/10/2025-10-29_14-00-50.webp",
-                title = "Коллектив Уфимского университета стал лауреатом престижного фестиваля",
-                category = "События",
-                date = "29 Окт, 13:00",
+                banner = "https://uust.ru/media/press-center/news/covers/2025/11/2025-11-18_09-47-23.webp",
+                title = "От филологии до физики: наука и гармония династии Закирьяновых из УУНиТ",
+                category = "Наука",
+                categoryIcon = Res.drawable.ic_science_outlined,
+                date = "18 Ноя, 09:47",
                 onClick = {}
             )
         }
 
-        repeat(69) { index ->
-            item(
-                key = "newsPost${3 + index}",
-                contentType = "newsPost"
-            ) {
-                NewsPost(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 16.dp),
-                    banner = "https://uust.ru/media/press-center/news/covers/2025/10/2025-10-29_14-00-50.webp",
-                    title = "Заголовок новости",
-                    category = "Что-то...",
-                    date = "5 часов назад",
-                    onClick = {}
-                )
-            }
+        item(
+            key = "newsPost3",
+            contentType = "newsPost"
+        ) {
+            NewsPost(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
+                banner = "https://uust.ru/media/press-center/news/covers/2025/11/2025-11-17_13-00-26.webp",
+                title = "В Международный день студентов УУНиТ чествует стипендиатов Главы Башкирии",
+                category = "Стипендия",
+                categoryIcon = Res.drawable.ic_money,
+                date = "17 Ноя, 12:45",
+                onClick = {}
+            )
         }
         
         item(

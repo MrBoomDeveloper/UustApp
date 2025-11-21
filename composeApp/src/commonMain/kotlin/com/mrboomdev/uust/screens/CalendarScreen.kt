@@ -20,13 +20,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mrboomdev.uust.UustSettings
 import com.mrboomdev.uust.UustTheme
-import com.mrboomdev.uust.components.ScheduleItem
+import com.mrboomdev.uust.components.Holiday
 import com.mrboomdev.uust.components.ScheduleItemProgress
+import com.mrboomdev.uust.components.SchedulePreview
+import com.mrboomdev.uust.data.Holidays
 import com.mrboomdev.uust.data.api.UustTimeApi
 import com.mrboomdev.uust.data.api.UustTimeSchedule
-import com.mrboomdev.uust.observeAsState
+import com.mrboomdev.uust.data.settings.UustSettings
+import com.mrboomdev.uust.data.settings.observeAsState
 import com.mrboomdev.uust.utils.collectAsStateAndCache
 import com.mrboomdev.uust.utils.ifThen
 import com.mrboomdev.uust.utils.toLocalDate
@@ -305,22 +307,32 @@ fun CalendarScreen(
                 )
 
                 if(schedules.isEmpty()) {
-//                    if(Holidays.all.any { holiday ->
-//                        true
-//                    }) {
-//                        Holiday()
-//                        return@HorizontalPager
-//                    }
+                    remember(pagerDate) {
+                        Holidays.all.firstOrNull { holidayDate ->
+                            holidayDate.first == pagerDate.month && holidayDate.second == pagerDate.day
+                        }
+                    }?.also { holiday ->
+                        Holiday(
+                            modifier = Modifier
+                                .padding(32.dp)
+                                .fillMaxWidth()
+                                .weight(1f),
+                            name = "Праздник!" // TODO: Replace with an actual holiday name
+                        )
+                        
+                        return@HorizontalPager
+                    }
 
                     Text(
                         modifier = Modifier
                             .weight(1f)
+                            .fillMaxWidth()
                             .wrapContentSize(Alignment.Center),
                         style = MaterialTheme.typography.titleMedium,
                         fontFamily = UustTheme.fonts.golos,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.secondary,
-                        text = "Пары отсутствуют"
+                        text = "Занятия отсутствуют"
                     )
 
                     return@HorizontalPager
@@ -335,7 +347,7 @@ fun CalendarScreen(
                         val endMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute + daysDiffInMinutes
                         val currentMinute = currentTime.hour * 60 + currentTime.minute
 
-                        ScheduleItem(
+                        SchedulePreview(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp)
                                 .fillMaxWidth(),

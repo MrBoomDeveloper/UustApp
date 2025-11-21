@@ -71,30 +71,37 @@ private class AndroidLocationManager(
 
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private suspend fun init() {
-        _locationFlow.emit(suspendCoroutine { coroutine ->
-            fusedClient.lastLocation.addOnSuccessListener { location ->
-                if(location == null) {
-                    coroutine.resumeWith(Result.success(null))
-                    return@addOnSuccessListener
+        try {
+            _locationFlow.emit(suspendCoroutine { coroutine ->
+                fusedClient.lastLocation.addOnSuccessListener { location ->
+                    if(location == null) {
+                        coroutine.resumeWith(Result.failure(UnsupportedOperationException()))
+                        return@addOnSuccessListener
+                    }
+
+                    coroutine.resumeWith(Result.success(location.latitude to location.longitude))
+                }.addOnFailureListener {
+                    coroutine.resumeWith(Result.failure(it))
+                }.addOnCanceledListener {
+                    coroutine.resumeWith(Result.failure(CancellationException()))
                 }
-                
-                coroutine.resumeWith(Result.success(location.latitude to location.longitude))
-            }.addOnFailureListener {
-                coroutine.resumeWith(Result.failure(it))
-            }.addOnCanceledListener { 
-                coroutine.resumeWith(Result.failure(CancellationException()))
-            }
-        })
+            })
+        } catch(_: UnsupportedOperationException) {
+            // Retry to init
+            delay(100)
+            init()
+            return
+        }
         
         fusedClient.requestLocationUpdates(
             LocationRequest.Builder(1000)
                 .setWaitForAccurateLocation(false)
                 .build(), { location ->
-                @Suppress("RunBlockingInSuspendFunction")
-                runBlocking { 
-                    _locationFlow.emit(location.latitude to location.longitude)
-                }
-            }, Looper.getMainLooper()
+                    @Suppress("RunBlockingInSuspendFunction") 
+                    runBlocking {
+                        _locationFlow.emit(location.latitude to location.longitude) 
+                    } 
+                }, Looper.getMainLooper()
         )
         
         while(true) {

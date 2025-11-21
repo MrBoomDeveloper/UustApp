@@ -8,6 +8,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import com.mrboomdev.uust.data.settings.UustSettings
+import com.mrboomdev.uust.data.settings.observeAsState
 import org.jetbrains.compose.resources.Font
 import uust.composeapp.generated.resources.*
 

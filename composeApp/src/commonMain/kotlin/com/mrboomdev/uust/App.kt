@@ -20,135 +20,62 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
-import com.mrboomdev.uust.screens.*
+import com.mrboomdev.uust.navigation.AppTabs
+import com.mrboomdev.uust.navigation.Routes
 import com.mrboomdev.uust.utils.add
 import com.mrboomdev.uust.utils.iterateIndexed
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import uust.composeapp.generated.resources.*
 
-enum class AppTabs(
-    val title: String,
-    val icon: DrawableResource,
-    val activeIcon: DrawableResource = icon,
-    val defaultRoute: Routes
-) {
-    HOME(
-        title = "Главная",
-        icon = Res.drawable.ic_home_outlined,
-        activeIcon = Res.drawable.ic_home_filled,
-        defaultRoute = Routes.Home
-    ),
-
-    NAVIGATION(
-        title = "Навигация",
-        icon = Res.drawable.ic_explore_outlined,
-        activeIcon = Res.drawable.ic_explore_filled,
-        defaultRoute = Routes.Navigation
-    ),
-
-    INFO(
-        title = "Инфо",
-        icon = Res.drawable.ic_help_outlined,
-        defaultRoute = Routes.Help
-    )
-}
-
 val LocalBackStack = compositionLocalOf<MutableList<Routes>> { 
     throw NotImplementedError("You didn't provide LocalBackStack!")
 }
 
-@Serializable
-sealed interface Routes: NavKey {
-    @Serializable
-    data object Welcome: Routes {
-        @Composable
-        override fun Content(
-            contentPadding: PaddingValues
-        ) = WelcomeScreen(contentPadding = contentPadding)
-    }
-    
-    data object Settings: Routes {
-        @Composable
-        override fun Content(contentPadding: PaddingValues) {
-            SettingsScreen(contentPadding)
-        }
-    }
-    
-    @Serializable
-    data object Home: Routes {
-        @Composable
-        override fun Content(
-            contentPadding: PaddingValues
-        ) = HomeScreen(contentPadding = contentPadding)
-    }
-
-    @Serializable
-    data object Navigation: Routes {
-        @Composable
-        override fun Content(
-            contentPadding: PaddingValues
-        ) = MapScreen(contentPadding)
-    }
-
-    @Serializable
-    data object Help: Routes {
-        @Composable
-        override fun Content(
-            contentPadding: PaddingValues
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-                text = "This screen isn't done yet!"
-            )
-        }
-    }
-
-    @Serializable
-    data object Calendar: Routes {
-        @Composable
-        override fun Content(
-            contentPadding: PaddingValues
-        ) = CalendarScreen(contentPadding = contentPadding)
-    }
-
-    @Composable
-    fun Content(contentPadding: PaddingValues)
-}
-
-private fun MutableMap<Int, MutableList<Routes>>.getBackStack(index: Int): MutableList<Routes> {
+private fun MutableMap<Int, MutableList<Routes>>.getBackStack(
+    index: Int,
+    initDefault: Boolean = true,
+): MutableList<Routes> {
     return get(index) ?: mutableStateListOf<Routes>().also { backStack ->
         set(index, backStack)
-        backStack += AppTabs.entries[index].defaultRoute
+        
+        if(initDefault) {
+            backStack += AppTabs.entries[index].defaultRoute
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
-fun App() {
+fun App(initialRoute: Routes) {
     UustTheme {
         val topAppBarBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         val bottomAppBarBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
-        val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState { AppTabs.entries.size }
-        var showWarning by remember { mutableStateOf(false) }
+        val coroutineScope = rememberCoroutineScope()
 
         val windowSize = currentWindowAdaptiveInfo().windowSizeClass
         val useRail = windowSize.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
         val backStacks by rememberSerializable<MutableMap<Int, MutableList<Routes>>> {
             mutableStateOf(mutableMapOf())
+        }
+        
+        LaunchedEffect(Unit) {
+            backStacks.getBackStack(
+                index = 0,
+                initDefault = false
+            ).apply { 
+                if(isEmpty()) {
+                    add(initialRoute)
+                }
+            }
         }
         
         Row(Modifier.fillMaxSize()) {

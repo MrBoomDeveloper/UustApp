@@ -3,11 +3,9 @@ package com.mrboomdev.uust.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -16,7 +14,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.mrboomdev.uust.UustTheme
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.Font
+import org.jetbrains.compose.resources.painterResource
 import uust.composeapp.generated.resources.Res
 import uust.composeapp.generated.resources.golos_text_medium
 import uust.composeapp.generated.resources.golos_text_regular
@@ -26,6 +26,7 @@ fun NewsPost(
     modifier: Modifier = Modifier,
     category: String,
     categoryColor: Color = Color(0xff723bff),
+    categoryIcon: DrawableResource? = null,
     banner: String,
     title: String,
     date: String,
@@ -52,17 +53,33 @@ fun NewsPost(
                     contentScale = ContentScale.Crop
                 ) 
                 
-                Text(
+                Row(
                     modifier = Modifier
                         .padding(8.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(categoryColor)
                         .padding(horizontal = 8.dp, vertical = 4.dp),
-                    fontFamily = UustTheme.fonts.golos,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = contentColorFor(categoryColor),
-                    text = category
-                )
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val onCategoryColor = contentColorFor(categoryColor)
+                    
+                    categoryIcon?.also {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            painter = painterResource(categoryIcon),
+                            tint = onCategoryColor,
+                            contentDescription = null
+                        )
+                    }
+                    
+                    Text(
+                        fontFamily = UustTheme.fonts.golos,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = onCategoryColor,
+                        text = category
+                    )
+                }
             }
 
             Column(

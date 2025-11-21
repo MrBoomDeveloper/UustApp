@@ -71,9 +71,6 @@ kotlin {
             implementation(libs.coil.network.ktor3)
 
             implementation("nl.jacobras:Human-Readable:1.12.1")
-            
-            // For map rendering
-            implementation("com.badlogicgames.gdx:gdx:1.14.0")
         }
 
         val mobileMain by creating {
@@ -86,8 +83,17 @@ kotlin {
             }
         }
         
+        val nonApple by creating {
+            dependsOn(commonMain.get())
+            dependencies {
+                // For map rendering
+                implementation("com.badlogicgames.gdx:gdx:1.14.0")
+            }
+        }
+        
         androidMain {
             dependsOn(mobileMain)
+            dependsOn(nonApple)
             dependencies {
                 implementation(compose.preview)
                 implementation(libs.androidx.activity.compose)
