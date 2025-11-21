@@ -11,13 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.mrboomdev.uust.utils.permissions.Permission
+import com.mrboomdev.uust.utils.permissions.PermissionRequestResult
+import com.mrboomdev.uust.utils.permissions.rememberPermissionController
 import com.mrboomdev.uust.utils.rememberLocationManager
-import com.mrboomdev.uust.utils.rememberPermissionController
-import dev.icerock.moko.permissions.DeniedAlwaysException
-import dev.icerock.moko.permissions.DeniedException
-import dev.icerock.moko.permissions.Permission
-import dev.icerock.moko.permissions.RequestCanceledException
-import dev.icerock.moko.permissions.location.LOCATION
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -36,7 +33,7 @@ fun MapScreen(
     
     LaunchedEffect(Unit) {
         while(true) {
-            hasLocationPermission = permissionsController.isPermissionGranted(Permission.LOCATION)
+            hasLocationPermission = permissionsController.hasPermission(Permission.LOCATION)
             delay(1000)
         }
     }
@@ -50,7 +47,7 @@ fun MapScreen(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        permissionsController.openAppSettings()
+                        permissionsController.requestPermissionFucked(Permission.LOCATION)
                     }
                 ) {
                     Text("Open app settings")
@@ -93,14 +90,23 @@ fun MapScreen(
                 Button(
                     onClick = {
                         coroutineScope.launch {
-                            try {
-                                permissionsController.providePermission(Permission.LOCATION)
-                                hasLocationPermission = true
-                            } catch(_: DeniedAlwaysException) {
-                                error = "Permission denied and cannot be asked for! Grant it in app's settings."
-                            } catch(_: DeniedException) {
-                                error = "Permission denied!"
-                            } catch(_: RequestCanceledException) {}
+                            when(permissionsController.requestPermission(
+                                Permission.LOCATION
+                            )) {
+                                PermissionRequestResult.GRANTED -> {
+                                    hasLocationPermission = true
+                                }
+                                
+                                PermissionRequestResult.DENIED -> {
+                                    error = "Permission denied!"
+                                }
+                                
+                                PermissionRequestResult.FUCKED -> {
+                                    error = "Permission denied and cannot be asked for! Grant it in app's settings."
+                                }
+                                
+                                PermissionRequestResult.CANCELLED -> {}
+                            }
                         }
                     }
                 ) {

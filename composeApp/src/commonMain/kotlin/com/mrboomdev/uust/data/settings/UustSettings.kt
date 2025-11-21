@@ -1,9 +1,8 @@
 package com.mrboomdev.uust.data.settings
 
 import com.russhwolf.settings.ObservableSettings
-import com.russhwolf.settings.Settings
 
-internal val settings = Settings() as ObservableSettings
+internal expect val settings: ObservableSettings
 
 object UustSettings {
     val scheduleInRow = BooleanSetting("scheduleInRow", false)
