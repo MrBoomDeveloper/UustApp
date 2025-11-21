@@ -6,6 +6,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -320,20 +321,17 @@ fun App(initialRoute: Routes) {
                     }
                 }
             ) { contentPadding ->
-                HorizontalPager(
-                    modifier = Modifier.fillMaxSize(),
-                    state = pagerState,
-                    userScrollEnabled = false
-                ) { index ->
+                @Composable
+                fun PagerContent(index: Int) {
                     val backStack = backStacks.getBackStack(index)
-                    
+
                     CompositionLocalProvider(
                         LocalBackStack provides backStack
                     ) {
                         NavDisplay(
                             backStack = backStack,
                             onBack = { backStack.removeLastOrNull() },
-                            
+
                             entryDecorators = listOf(
                                 rememberSaveableStateHolderNavEntryDecorator(),
                                 rememberViewModelStoreNavEntryDecorator()
@@ -344,13 +342,13 @@ fun App(initialRoute: Routes) {
                                 slideInHorizontally(initialOffsetX = { it }) togetherWith
                                         slideOutHorizontally(targetOffsetX = { -it })
                             },
-                            
+
                             popTransitionSpec = {
                                 // Slide in from left when navigating back
                                 slideInHorizontally(initialOffsetX = { -it }) togetherWith
                                         slideOutHorizontally(targetOffsetX = { it })
                             },
-                            
+
                             predictivePopTransitionSpec = {
                                 // Slide in from left when navigating back
                                 slideInHorizontally(initialOffsetX = { -it }) togetherWith
@@ -362,6 +360,22 @@ fun App(initialRoute: Routes) {
                             }
                         }
                     }
+                }
+                
+                if(useRail) {
+                    VerticalPager(
+                        modifier = Modifier.fillMaxSize(),
+                        state = pagerState,
+                        userScrollEnabled = false,
+                        pageContent = { PagerContent(it) }
+                    )
+                } else {
+                    HorizontalPager(
+                        modifier = Modifier.fillMaxSize(),
+                        state = pagerState,
+                        userScrollEnabled = false,
+                        pageContent = { PagerContent(it) }
+                    )
                 }
             } 
         }

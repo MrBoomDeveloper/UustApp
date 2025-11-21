@@ -100,6 +100,7 @@ kotlin {
         
         webMain.dependencies { 
             implementation(libs.settings.makeobservable)
+            implementation(libs.ktor.client.js)
         }
         
         commonTest.dependencies {

@@ -626,7 +626,9 @@ fun HomeScreen(
             span = { GridItemSpan(maxLineSpan) }
         ) {
             CatHeader(
-                modifier = Modifier.padding(top = 8.dp, bottom = 12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 12.dp),
                 icon = painterResource(Res.drawable.ic_meal_outlined),
                 title = "Буфет"
             ) {
@@ -658,7 +660,8 @@ fun HomeScreen(
 
         item(
             key = "lunchMenu",
-            contentType = "lunchMenu"
+            contentType = "lunchMenu",
+            span = { GridItemSpan(maxLineSpan) }
         ) {
             Row(
                 modifier = Modifier
