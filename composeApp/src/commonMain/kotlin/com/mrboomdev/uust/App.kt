@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.*
@@ -86,15 +87,44 @@ fun App(initialRoute: Routes) {
                         containerColor = MaterialTheme.colorScheme.background,
                         
                         header = {
-                            Icon(
+                            val backStack = backStacks.getBackStack(pagerState.currentPage)
+                            
+                            Crossfade(
                                 modifier = Modifier
                                     .padding(vertical = 16.dp)
                                     .size(32.dp),
 
-                                painter = painterResource(Res.drawable.logo),
-                                tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
-                            )
+                                targetState = backStack.size > 1,
+                                animationSpec = tween(250)
+                            ) { canPop ->
+                                if(canPop) {
+                                    FilledIconButton(
+                                        shape = RoundedCornerShape(8.dp),
+                                        
+                                        onClick = {
+                                            if(backStack.size <= 1) return@FilledIconButton
+                                            backStack.removeLastOrNull()
+                                        }
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(4.dp),
+                                            painter = painterResource(Res.drawable.ic_back),
+                                            contentDescription = null
+                                        )
+                                    }
+
+                                    return@Crossfade
+                                }
+
+                                Icon(
+                                    modifier = Modifier.fillMaxSize(),
+                                    painter = painterResource(Res.drawable.logo),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = null
+                                )
+                            }
                         }
                     ) {
                         AppTabs.entries.forEachIndexed { index, tab ->
@@ -148,104 +178,17 @@ fun App(initialRoute: Routes) {
 
                 topBar = {
                     Box {
-                        CenterAlignedTopAppBar(
-                            scrollBehavior = topAppBarBehavior,
-                            
-                            windowInsets = WindowInsets.safeDrawing.only(
-                                WindowInsetsSides.Horizontal + WindowInsetsSides.Top
-                            ).let {
-                                if(useRail) {
-                                    it.only(WindowInsetsSides.Top + WindowInsetsSides.End).add(left = 16.dp)
-                                } else it
-                            },
-
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                scrolledContainerColor = MaterialTheme.colorScheme.background
-                            ),
-
-                            navigationIcon = {
-                                val backStack = backStacks.getBackStack(pagerState.currentPage)
-                                
-                                Crossfade(
-                                    modifier = Modifier
-                                        .padding(start = 16.dp)
-                                        .size(32.dp),
-                                    
-                                    targetState = backStack.size > 1,
-                                    animationSpec = tween(250)
-                                ) { canPop ->
-                                    if(canPop) {
-                                        IconButton(
-                                            modifier = Modifier
-                                                .scale(1.2f),
-                                            
-                                            onClick = {
-                                                if(backStack.size <= 1) return@IconButton
-                                                backStack.removeLastOrNull()
-                                            }
-                                        ) {
-                                            Icon(
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .padding(4.dp),
-                                                painter = painterResource(Res.drawable.ic_back),
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                contentDescription = null
-                                            )
-                                        }
-                                        
-                                        return@Crossfade
-                                    }
-                                    
-                                    if(useRail) {
-                                        return@Crossfade
-                                    }
-
-                                    Icon(
-                                        modifier = Modifier.fillMaxSize(),
-                                        painter = painterResource(Res.drawable.logo),
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        contentDescription = null
-                                    )
-                                }
-                            },
-
-                            title = {
-                                Text(
-                                    fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
-                                    color = MaterialTheme.colorScheme.primary,
-                                    text = "Мы - УУНиТ"
-                                )
-                            },
-
-                            actions = {
-                                IconButton(
-                                    onClick = {}
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(32.dp),
-                                        painter = painterResource(Res.drawable.ic_search),
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        contentDescription = null
-                                    )
-                                }
-                                
-                                IconButton(
-                                    onClick = {
-                                        backStacks.getBackStack(
-                                            pagerState.currentPage
-                                        ) += Routes.Settings
-                                    }
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(32.dp),
-                                        painter = painterResource(Res.drawable.ic_account),
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                        )
+                        if(useRail) {
+                            DesktopUustHeader(
+                                topAppBarBehavior = topAppBarBehavior,
+                                backStack = backStacks.getBackStack(pagerState.currentPage)
+                            )
+                        } else {
+                            MobileUustHeader(
+                                topAppBarBehavior = topAppBarBehavior,
+                                backStack = backStacks.getBackStack(pagerState.currentPage)
+                            )
+                        }
 
                         HorizontalDivider(
                             modifier = Modifier
@@ -380,4 +323,151 @@ fun App(initialRoute: Routes) {
             } 
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MobileUustHeader(
+    topAppBarBehavior: TopAppBarScrollBehavior,
+    backStack: MutableList<Routes>
+) {
+    CenterAlignedTopAppBar(
+        scrollBehavior = topAppBarBehavior,
+
+        windowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Horizontal + WindowInsetsSides.Top
+        ),
+
+        colors = TopAppBarDefaults.topAppBarColors(
+            scrolledContainerColor = MaterialTheme.colorScheme.background
+        ),
+
+        navigationIcon = {
+            Crossfade(
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .size(32.dp),
+
+                targetState = backStack.size > 1,
+                animationSpec = tween(250)
+            ) { canPop ->
+                if(canPop) {
+                    IconButton(
+                        modifier = Modifier
+                            .scale(1.2f),
+
+                        onClick = {
+                            if(backStack.size <= 1) return@IconButton
+                            backStack.removeLastOrNull()
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(4.dp),
+                            painter = painterResource(Res.drawable.ic_back),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = null
+                        )
+                    }
+
+                    return@Crossfade
+                }
+
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(Res.drawable.logo),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            }
+        },
+
+        title = {
+            Text(
+                fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
+                color = MaterialTheme.colorScheme.primary,
+                text = "Мы - УУНиТ"
+            )
+        },
+
+        actions = {
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    painter = painterResource(Res.drawable.ic_search),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    backStack += Routes.Settings
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    painter = painterResource(Res.drawable.ic_account),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DesktopUustHeader(
+    topAppBarBehavior: TopAppBarScrollBehavior,
+    backStack: MutableList<Routes>
+) {
+    TopAppBar(
+        scrollBehavior = topAppBarBehavior,
+
+        windowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.End + WindowInsetsSides.Top
+        ).add(left = 12.dp),
+
+        colors = TopAppBarDefaults.topAppBarColors(
+            scrolledContainerColor = MaterialTheme.colorScheme.background
+        ),
+
+        title = {
+            Text(
+                fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
+                color = MaterialTheme.colorScheme.primary,
+                text = "Мы - УУНиТ"
+            )
+        },
+
+        actions = {
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    painter = painterResource(Res.drawable.ic_search),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    backStack += Routes.Settings
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.size(32.dp),
+                    painter = painterResource(Res.drawable.ic_account),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = null
+                )
+            }
+        }
+    )
 }

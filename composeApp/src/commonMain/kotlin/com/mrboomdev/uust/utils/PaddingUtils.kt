@@ -1,11 +1,20 @@
 package com.mrboomdev.uust.utils
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+
+@Composable
+fun PaddingValues.asWindowInsets() = WindowInsets(
+    left = calculateLeftPadding(LocalLayoutDirection.current),
+    top = calculateTopPadding(),
+    right = calculateRightPadding(LocalLayoutDirection.current),
+    bottom = calculateBottomPadding()
+)
 
 @Composable
 fun WindowInsets.add(
