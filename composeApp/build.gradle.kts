@@ -41,19 +41,19 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.adaptive)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.ui)
+            implementation("org.jetbrains.compose.components:components-resources:1.10.0-beta02")
+            implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.10.0-beta02")
+            implementation(libs.compose.material3)
+            implementation(libs.compose.adaptive)
 
             implementation(libs.navigation3.ui)
-            implementation(libs.lifecycle.viewmodel.navigation3)
+            implementation(libs.navigation3.viewmodel)
             
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.compose.viewmodel)
+            implementation(libs.compose.lifecycle)
 
             implementation(libs.filekit.core)
             implementation(libs.settings)
@@ -70,7 +70,7 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
 
-            implementation(libs.human.readable)
+            implementation(libs.humanReadable)
         }
 
         val mobileMain by creating {
@@ -89,7 +89,7 @@ kotlin {
                 implementation(compose.preview)
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.androidx.appcompat)
-                implementation(libs.androidx.core.splashscreen)
+                implementation(libs.android.splashscreen)
                 implementation("com.google.android.gms:play-services-location:21.3.0")
             }
         }
