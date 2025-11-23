@@ -307,7 +307,7 @@ fun CalendarScreen(
                                     buildString {
                                         append("До начала: ")
 
-                                        if(timeBeforeBeginning.toInt() * 1_000_000L >= MAX_MILLIS_OF_DAY) {
+                                        if(timeBeforeBeginning.toInt() * 1_000_000L !in 1..<MAX_MILLIS_OF_DAY) {
                                             append(
                                                 HumanReadable.timeAgo(
                                                     Instant.fromEpochSeconds(startMinute.toLong() * 60),

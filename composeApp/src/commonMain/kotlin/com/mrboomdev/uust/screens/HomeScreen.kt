@@ -482,10 +482,14 @@ fun HomeScreen(
                             val endMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute
                             val currentMinute = currentTime.hour * 60 + currentTime.minute
 
+                            val untilBeginning = ((startMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L }
+                            val untilEnding = ((endMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L && it < 80 * 60 * 1000 }
+
                             SchedulePreview(
                                 modifier = Modifier
                                     .padding(horizontal = 8.dp)
                                     .fillMaxWidth(),
+                                
                                 outlined = useOutlinedSchedule,
                                 type = schedule.type,
                                 index = schedule.schedule_time_new_id,
@@ -495,7 +499,7 @@ fun HomeScreen(
                                 location = "${schedule.building_short_title}/${schedule.room_title}",
                                 teacher = schedule.teacher_fullname.takeUnless { it.isBlank() },
 
-                                footer = ((startMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L }?.let { timeBeforeBeginning ->
+                                footer = untilBeginning?.let { timeBeforeBeginning ->
                                     buildString {
                                         append("До начала: ")
 
@@ -507,7 +511,7 @@ fun HomeScreen(
                                             minute()
                                         }))
                                     }
-                                } ?: ((endMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L && it < 80 * 60 * 1000 }?.let { timeBeforeEnd ->
+                                } ?: untilEnding?.let { timeBeforeEnd ->
                                     buildString {
                                         append("До конца: ")
 
@@ -523,7 +527,7 @@ fun HomeScreen(
 
                                 progress = when {
                                     currentMinute > endMinute -> ScheduleItemProgress.COMPLETED
-                                    schedule == currentSchedule?.first -> ScheduleItemProgress.NOW
+                                    schedule == currentSchedule?.first?.first -> ScheduleItemProgress.NOW
                                     else -> ScheduleItemProgress.SOON
                                 },
 

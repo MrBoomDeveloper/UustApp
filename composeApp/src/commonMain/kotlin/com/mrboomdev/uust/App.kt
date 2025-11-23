@@ -128,9 +128,13 @@ fun App(initialRoute: Routes) {
                                             interactionSource = null,
                                             indication = null,
                                             onClick = {
-                                                backStacks.getBackStack(pagerState.currentPage).apply { 
+                                                backStacks.getBackStack(0).apply { 
                                                     clear()
                                                     add(Routes.Home)
+                                                }
+                                                
+                                                coroutineScope.launch { 
+                                                    pagerState.animateScrollToPage(0)
                                                 }
                                             }
                                         ),
