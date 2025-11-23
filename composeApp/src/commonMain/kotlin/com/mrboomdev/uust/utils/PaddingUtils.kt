@@ -9,6 +9,44 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
+fun PaddingValues.onlyHorizontal() = PaddingValues(
+    start = calculateLeftPadding(LocalLayoutDirection.current),
+    end = calculateRightPadding(LocalLayoutDirection.current)
+)
+
+@Composable
+fun PaddingValues.onlyVertical() = PaddingValues(
+    top = calculateTopPadding(),
+    bottom = calculateBottomPadding()
+)
+
+@Composable
+fun PaddingValues.only(
+    start: Boolean = false,
+    top: Boolean = false,
+    end: Boolean = false,
+    bottom: Boolean = false
+) = PaddingValues(
+    start = if(start) calculateLeftPadding(LocalLayoutDirection.current) else 0.dp,
+    top = if(top) calculateTopPadding() else 0.dp,
+    end = if(end) calculateRightPadding(LocalLayoutDirection.current) else 0.dp,
+    bottom = if(bottom) calculateBottomPadding() else 0.dp
+)
+
+@Composable
+fun PaddingValues.exclude(
+    start: Boolean = false,
+    top: Boolean = false,
+    end: Boolean = false,
+    bottom: Boolean = false
+) = PaddingValues(
+    start = if(!start) calculateLeftPadding(LocalLayoutDirection.current) else 0.dp,
+    top = if(!top) calculateTopPadding() else 0.dp,
+    end = if(!end) calculateRightPadding(LocalLayoutDirection.current) else 0.dp,
+    bottom = if(!bottom) calculateBottomPadding() else 0.dp
+)
+
+@Composable
 fun PaddingValues.asWindowInsets() = WindowInsets(
     left = calculateLeftPadding(LocalLayoutDirection.current),
     top = calculateTopPadding(),

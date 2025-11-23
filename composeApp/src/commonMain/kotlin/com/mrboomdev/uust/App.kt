@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.VerticalPager
@@ -84,7 +85,9 @@ fun App(initialRoute: Routes) {
             if(useRail) {
                 Box {
                     NavigationRail(
-                        containerColor = MaterialTheme.colorScheme.background,
+                        containerColor = if(useRail) {
+                            MaterialTheme.colorScheme.surface
+                        } else MaterialTheme.colorScheme.background,
                         
                         header = {
                             val backStack = backStacks.getBackStack(pagerState.currentPage)
@@ -119,7 +122,19 @@ fun App(initialRoute: Routes) {
                                 }
 
                                 Icon(
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clickable(
+                                            interactionSource = null,
+                                            indication = null,
+                                            onClick = {
+                                                backStacks.getBackStack(pagerState.currentPage).apply { 
+                                                    clear()
+                                                    add(Routes.Home)
+                                                }
+                                            }
+                                        ),
+                                    
                                     painter = painterResource(Res.drawable.logo),
                                     tint = MaterialTheme.colorScheme.primary,
                                     contentDescription = null
@@ -274,7 +289,7 @@ fun App(initialRoute: Routes) {
                         NavDisplay(
                             backStack = backStack,
                             onBack = { backStack.removeLastOrNull() },
-
+ 
                             entryDecorators = listOf(
                                 rememberSaveableStateHolderNavEntryDecorator(),
                                 rememberViewModelStoreNavEntryDecorator()
@@ -433,7 +448,8 @@ private fun DesktopUustHeader(
         ).add(left = 12.dp),
 
         colors = TopAppBarDefaults.topAppBarColors(
-            scrolledContainerColor = MaterialTheme.colorScheme.background
+            scrolledContainerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surface
         ),
 
         title = {

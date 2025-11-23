@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -241,8 +242,16 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        modifier = Modifier.weight(1f),
-                        fontSize = 32.sp,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .weight(1f),
+                        
+                        maxLines = 1,
+                        
+                        autoSize = TextAutoSize.StepBased(
+                            maxFontSize = 32.sp
+                        ),
+                        
                         fontFamily = FontFamily(
                             Font(
                                 Res.font.monsterrat_italic,
@@ -371,6 +380,20 @@ fun HomeScreen(
                 Text("ПРАЗДНИК! ОТДЫХАЕМ!")
             }
         }
+        
+        if(currentTime.dayOfWeek == DayOfWeek.SUNDAY) {
+            item(
+                key = "sunday",
+                contentType = "sunday"
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    fontFamily = UustTheme.fonts.golos,
+                    color = MaterialTheme.colorScheme.secondary,
+                    text = "Выходной! Отдыхаем..."
+                )
+            }
+        }
 
         item(
             key = "schedule",
@@ -397,7 +420,10 @@ fun HomeScreen(
                             val startMinute = scheduleInfo.timeFrom.hour * 60 + scheduleInfo.timeFrom.minute
                             val endMinute = scheduleInfo.timeTo.hour * 60 + scheduleInfo.timeTo.minute
                             val currentMinute = currentTime.hour * 60 + currentTime.minute
-
+                            
+                            val untilBeginning = ((startMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L }
+                            val untilEnding = ((endMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L && it < 80 * 60 * 1000 }
+                            
                             SchedulePreview(
                                 modifier = Modifier.offset(x = 8.dp).width(250.dp),
                                 outlined = useOutlinedSchedule,
@@ -409,7 +435,7 @@ fun HomeScreen(
                                 location = "${schedule.building_short_title}/${schedule.room_title}",
                                 teacher = schedule.teacher_fullname.takeUnless { it.isBlank() },
 
-                                footer = ((startMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L }?.let { timeBeforeBeginning ->
+                                footer = untilBeginning?.let { timeBeforeBeginning ->
                                     buildString {
                                         append("До начала: ")
 
@@ -421,7 +447,7 @@ fun HomeScreen(
                                             minute()
                                         }))
                                     }
-                                } ?: ((endMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L && it < 80 * 60 * 1000 }?.let { timeBeforeEnd ->
+                                } ?: untilEnding?.let { timeBeforeEnd ->
                                     buildString {
                                         append("До конца: ")
 
@@ -437,7 +463,7 @@ fun HomeScreen(
 
                                 progress = when {
                                     currentMinute > endMinute -> ScheduleItemProgress.COMPLETED
-                                    schedule == currentSchedule?.first -> ScheduleItemProgress.NOW
+                                    schedule == currentSchedule?.first?.first -> ScheduleItemProgress.NOW
                                     else -> ScheduleItemProgress.SOON
                                 },
 
