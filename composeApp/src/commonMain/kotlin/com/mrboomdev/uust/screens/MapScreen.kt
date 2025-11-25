@@ -1,6 +1,5 @@
 package com.mrboomdev.uust.screens
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.AlertDialog
@@ -11,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.mrboomdev.uust.components.GeoMap
 import com.mrboomdev.uust.utils.permissions.Permission
 import com.mrboomdev.uust.utils.permissions.PermissionRequestResult
 import com.mrboomdev.uust.utils.permissions.rememberPermissionController
@@ -67,19 +67,13 @@ fun MapScreen(
     }
     
     Box(Modifier.fillMaxSize()) {
-        Canvas(
+        GeoMap(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
-        ) {
-            location?.also { location ->
-                drawCircle(
-                    color = Color.Red,
-                    radius = 10f,
-                    //center = Offset(location.first.toFloat(), location.second.toFloat())
-                )
-            }
-        }
+                .background(Color.Black),
+            
+            me = location
+        )
         
         Column(
             modifier = Modifier

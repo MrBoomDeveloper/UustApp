@@ -28,6 +28,6 @@ dependencyResolutionManagement {
     }
 }
 
-include(":composeApp")
+include(":composeApp", ":android")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "UUST"

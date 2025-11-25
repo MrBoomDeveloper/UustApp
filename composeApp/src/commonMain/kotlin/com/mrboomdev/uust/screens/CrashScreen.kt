@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,19 +44,20 @@ fun CrashScreen(
             key = "message",
             contentType = "message"
         ) {
-            Text(
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
-                    ),
+            SelectionContainer {
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 16.dp
+                        ),
 
-                fontFamily = UustTheme.fonts.golos,
-                style = MaterialTheme.typography.bodyLarge,
-                text = errorMessage
-            )
+                    fontFamily = UustTheme.fonts.golos,
+                    style = MaterialTheme.typography.bodyLarge,
+                    text = errorMessage
+                )
+            }
         }
     }
 }

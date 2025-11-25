@@ -18,3 +18,4 @@ composeApp/release/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+/android/libs/

@@ -1,24 +1,19 @@
 [versions]
-adaptive = "1.2.0"
 agp = "8.12.0"
-android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
 androidx-lifecycle = "2.9.6"
 coilCompose = "3.3.0"
 compose = "1.10.0-beta02"
 kotlin = "2.2.21"
-kotlinxDatetime = "0.7.1"
-kotlinxSerializationJson = "1.9.0"
 ktor = "3.3.2"
 multiplatformSettings = "1.3.0"
-napier = "2.7.1"
 permissions = "0.20.1"
 
 [libraries]
 filekit-core = { module = "io.github.vinceglb:filekit-core", version = "0.12.0" }
 humanReadable = { module = "nl.jacobras:Human-Readable", version = "1.12.1" }
-napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+napier = { module = "io.github.aakira:napier", version = "2.7.1" }
 
 android-splashscreen = { module = "androidx.core:core-splashscreen", version = "1.2.0" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.7.1" }
@@ -30,13 +25,13 @@ navigation3-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-v
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
-compose-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
+compose-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version = "1.2.0" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version = "1.10.0-alpha05" }
 compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 compose-lifecycle = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.9.0" }
 
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

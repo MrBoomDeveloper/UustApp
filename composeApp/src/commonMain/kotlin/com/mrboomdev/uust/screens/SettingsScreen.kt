@@ -67,10 +67,12 @@ fun SettingsScreen(
             fontFamily = UustTheme.fonts.golos,
             text = "Учетная запись ИСУ"
         )
-
+        
         Button(
             modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
-            onClick = {}
+            onClick = {
+                
+            }
         ) {
             Text("Вход пока не реализован")
         }

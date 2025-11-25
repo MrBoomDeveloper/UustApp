@@ -18,20 +18,15 @@ kotlin {
         }
     }
 
-    listOf(
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }
-
-    js {
-        browser()
-        binaries.executable()
-    }
+//    listOf(
+//        iosArm64(),
+//        iosSimulatorArm64()
+//    ).forEach { iosTarget ->
+//        iosTarget.binaries.framework {
+//            baseName = "ComposeApp"
+//            isStatic = true
+//        }
+//    }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -86,21 +81,29 @@ kotlin {
         androidMain {
             dependsOn(mobileMain)
             dependencies {
-                implementation(compose.preview)
+                implementation(project(":android"))
                 implementation(libs.androidx.activity.compose)
                 implementation(libs.androidx.appcompat)
                 implementation(libs.android.splashscreen)
                 implementation("com.google.android.gms:play-services-location:21.3.0")
+
+                val gdxVersion = "1.14.0"
+                implementation("com.badlogicgames.gdx:gdx:${gdxVersion}")
+                implementation("com.badlogicgames.gdx:gdx-backend-android:${gdxVersion}")
             }
         }
 
-        iosMain {
-            dependsOn(mobileMain)
-        }
+//        iosMain {
+//            dependsOn(mobileMain)
+//        }
         
-        webMain.dependencies { 
+        webMain.dependencies {
             implementation(libs.settings.makeobservable)
             implementation(libs.ktor.client.js)
+        }
+        
+        wasmJsMain.dependencies {
+            implementation("com.github.zakgof:korender:0.5.1")
         }
         
         commonTest.dependencies {
@@ -111,14 +114,21 @@ kotlin {
 
 android {
     namespace = "com.mrboomdev.uust"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = libs.versions.android.targetSdk.get().toInt()
 
     defaultConfig {
         applicationId = namespace
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.1.1"
+        
+        ndk {
+            abiFilters.add("armeabi-v7a")
+            abiFilters.add("arm64-v8a")
+            abiFilters.add("x86_64")
+            abiFilters.add("x86")
+        }
     }
     
     packaging {

@@ -70,14 +70,12 @@ fun App(initialRoute: Routes) {
             mutableStateOf(mutableMapOf())
         }
         
-        LaunchedEffect(Unit) {
-            backStacks.getBackStack(
-                index = 0,
-                initDefault = false
-            ).apply { 
-                if(isEmpty()) {
-                    add(initialRoute)
-                }
+        backStacks.getBackStack(
+            index = 0,
+            initDefault = false
+        ).apply { 
+            if(isEmpty()) {
+                add(initialRoute)
             }
         }
         
@@ -260,12 +258,22 @@ fun App(initialRoute: Routes) {
 
                                     onClick = {
                                         if(pagerState.currentPage == index) {
-                                            backStacks.getBackStack(pagerState.currentPage).iterateIndexed { index, _ ->
-                                                if(index == 0) return@iterateIndexed
-                                                remove()
+                                            backStacks.getBackStack(pagerState.currentPage).also { backStack ->
+                                                if(backStack.getOrNull(0) is Routes.Crash) {
+                                                    backStack.clear()
+                                                    backStack.add(AppTabs.entries[index].defaultRoute)
+                                                }
+                                                
+                                                backStack.iterateIndexed { index, _ ->
+                                                    if (index == 0) {
+                                                        return@iterateIndexed
+                                                    }
+
+                                                    remove()
+                                                }
+
+                                                return@NavigationBarItem
                                             }
-                                            
-                                            return@NavigationBarItem
                                         }
                                         
                                         coroutineScope.launch {
