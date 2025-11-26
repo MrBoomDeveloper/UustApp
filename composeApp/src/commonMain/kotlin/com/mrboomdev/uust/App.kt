@@ -41,6 +41,15 @@ val LocalBackStack = compositionLocalOf<MutableList<Routes>> {
     throw NotImplementedError("You didn't provide LocalBackStack!")
 }
 
+fun MutableList<Routes>.navigate(routes: Routes) {
+    if(lastOrNull() == routes) {
+        // Most likely user just pressed a button twice
+        return
+    }
+
+    add(routes)
+}
+
 private fun MutableMap<Int, MutableList<Routes>>.getBackStack(
     index: Int,
     initDefault: Boolean = true,
@@ -163,7 +172,7 @@ fun App(initialRoute: Routes) {
                                                 tab.activeIcon
                                             } else tab.icon
                                         ),
-                                        contentDescription = null,
+                                        contentDescription = null
                                     )
                                 },
 
@@ -419,33 +428,39 @@ private fun MobileUustHeader(
             Text(
                 fontFamily = FontFamily(Font(Res.font.golos_text_bold)),
                 color = MaterialTheme.colorScheme.primary,
-                text = "Мы - УУНиТ"
+                text = backStack.last().title
             )
         },
 
         actions = {
-            IconButton(
-                onClick = {}
+            AnimatedVisibility(
+                visible = backStack.lastOrNull() !is Routes.Settings
             ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(Res.drawable.ic_search),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            }
+                Row {
+//                    IconButton(
+//                        onClick = {}
+//                    ) {
+//                        Icon(
+//                            modifier = Modifier.size(32.dp),
+//                            painter = painterResource(Res.drawable.ic_search),
+//                            tint = MaterialTheme.colorScheme.primary,
+//                            contentDescription = null
+//                        )
+//                    }
 
-            IconButton(
-                onClick = {
-                    backStack += Routes.Settings
+                    IconButton(
+                        onClick = {
+                            backStack.navigate(Routes.Settings)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(32.dp),
+                            painter = painterResource(Res.drawable.ic_account),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = null
+                        )
+                    }
                 }
-            ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(Res.drawable.ic_account),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
             }
         }
     )
@@ -478,28 +493,34 @@ private fun DesktopUustHeader(
         },
 
         actions = {
-            IconButton(
-                onClick = {}
+            AnimatedVisibility(
+                visible = backStack.lastOrNull() !is Routes.Settings
             ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(Res.drawable.ic_search),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
-            }
+                Row {
+//                    IconButton(
+//                        onClick = {}
+//                    ) {
+//                        Icon(
+//                            modifier = Modifier.size(32.dp),
+//                            painter = painterResource(Res.drawable.ic_search),
+//                            tint = MaterialTheme.colorScheme.primary,
+//                            contentDescription = null
+//                        )
+//                    }
 
-            IconButton(
-                onClick = {
-                    backStack += Routes.Settings
+                    IconButton(
+                        onClick = {
+                            backStack.navigate(Routes.Settings)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(32.dp),
+                            painter = painterResource(Res.drawable.ic_account),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = null
+                        )
+                    }
                 }
-            ) {
-                Icon(
-                    modifier = Modifier.size(32.dp),
-                    painter = painterResource(Res.drawable.ic_account),
-                    tint = MaterialTheme.colorScheme.primary,
-                    contentDescription = null
-                )
             }
         }
     )

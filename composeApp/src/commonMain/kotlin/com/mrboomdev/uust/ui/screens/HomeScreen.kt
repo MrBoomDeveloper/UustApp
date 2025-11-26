@@ -42,6 +42,7 @@ import com.mrboomdev.uust.data.api.UustTimeApi
 import com.mrboomdev.uust.data.api.UustTimeSchedule
 import com.mrboomdev.uust.data.settings.UustSettings
 import com.mrboomdev.uust.data.settings.observeAsState
+import com.mrboomdev.uust.navigate
 import com.mrboomdev.uust.ui.UustTheme
 import com.mrboomdev.uust.ui.components.*
 import com.mrboomdev.uust.ui.isDarkTheme
@@ -285,7 +286,7 @@ fun HomeScreen(
                             ),
 
                             onClick = {
-                                UustSettings.outlinedSchedule.toggle()
+                                UustSettings.outlinedSchedule.set(!useOutlinedSchedule)
                             }
                         ) {
                             Icon(
@@ -312,7 +313,7 @@ fun HomeScreen(
                             ),
 
                             onClick = {
-                                UustSettings.scheduleInRow.toggle()
+                                UustSettings.scheduleInRow.set(!showScheduleInRow)
                             }
                         ) {
                             Icon(
@@ -339,7 +340,7 @@ fun HomeScreen(
                             ),
 
                             onClick = {
-                                backStack += Routes.Calendar
+                                backStack.navigate(Routes.Calendar)
                             }
                         ) {
                             Icon(
@@ -377,7 +378,12 @@ fun HomeScreen(
                 contentType = "holiday",
                 span = { GridItemSpan(maxLineSpan) }
             ) {
-                Text("ПРАЗДНИК! ОТДЫХАЕМ!")
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    fontFamily = UustTheme.fonts.golos,
+                    color = MaterialTheme.colorScheme.secondary,
+                    text = "Праздник! Отдыхаем..."
+                )
             }
         }
         
@@ -472,7 +478,7 @@ fun HomeScreen(
                                 },
 
                                 onClick = {
-
+                                    backStack.navigate(Routes.Schedule(schedule))
                                 }
                             )
                         }
@@ -540,7 +546,7 @@ fun HomeScreen(
                                 },
 
                                 onClick = {
-
+                                    backStack.navigate(Routes.Schedule(schedule))
                                 }
                             )
                         }

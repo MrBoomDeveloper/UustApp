@@ -24,15 +24,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mrboomdev.uust.LocalBackStack
 import com.mrboomdev.uust.data.Holidays
 import com.mrboomdev.uust.data.api.UustTimeApi
 import com.mrboomdev.uust.data.api.UustTimeSchedule
 import com.mrboomdev.uust.data.settings.UustSettings
 import com.mrboomdev.uust.data.settings.observeAsState
+import com.mrboomdev.uust.navigate
 import com.mrboomdev.uust.ui.UustTheme
 import com.mrboomdev.uust.ui.components.Holiday
 import com.mrboomdev.uust.ui.components.ScheduleItemProgress
 import com.mrboomdev.uust.ui.components.SchedulePreview
+import com.mrboomdev.uust.ui.navigation.Routes
 import com.mrboomdev.uust.utils.collectAsStateAndCache
 import com.mrboomdev.uust.utils.exclude
 import com.mrboomdev.uust.utils.ifThen
@@ -86,6 +89,7 @@ fun CalendarScreen(
     contentPadding: PaddingValues
 ) {
     val density = LocalDensity.current
+    val backStack = LocalBackStack.current
     val coroutineScope = rememberCoroutineScope()
     var currentTime by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())) }
     var toolbarHeight by remember { mutableStateOf(0.dp) }
@@ -340,7 +344,7 @@ fun CalendarScreen(
                                 },
 
                                 onClick = {
-
+                                    backStack.navigate(Routes.Schedule(schedule))
                                 }
                             )
                         }

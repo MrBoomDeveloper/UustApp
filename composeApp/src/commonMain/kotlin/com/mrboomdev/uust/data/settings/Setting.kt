@@ -41,8 +41,6 @@ class BooleanSetting(
         coroutineScope: CoroutineScope,
         defaultValue: Boolean
     ) = settings.getBooleanStateFlow(coroutineScope, key, defaultValue)
-
-    fun toggle() = set(!value)
 }
 
 class StringSetting(
