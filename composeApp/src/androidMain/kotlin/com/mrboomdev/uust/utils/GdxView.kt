@@ -5,26 +5,23 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import com.badlogic.gdx.*
 import com.badlogic.gdx.backends.android.*
-import com.badlogic.gdx.backends.android.keyboardheight.AndroidXKeyboardHeightProvider
 import com.badlogic.gdx.backends.android.surfaceview.FillResolutionStrategy
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Clipboard
-import com.badlogic.gdx.utils.SnapshotArray
 
 fun GdxView(
-    context: Context,
+    context: Activity,
     listener: ApplicationListener,
     config: AndroidApplicationConfiguration
 ): View {
     config.nativeLoader.load()
     val logger = AndroidApplicationLogger()
-    val handler = Handler()
-    val clipboard = AndroidClipboard(context)
-    val keyboardHeightProvider = AndroidXKeyboardHeightProvider(context as Activity)
+    val handler = Handler(Looper.myLooper()!!)
     
     val app = object : AndroidApplicationBase {
         private val runnables = Array<Runnable>()
@@ -40,51 +37,28 @@ fun GdxView(
         override fun getFiles() = mFiles
         override fun getHandler() = handler
         override fun getContext() = context
-
-        override fun getAudio(): Audio? {
-            TODO("Not yet implemented")
-        }
-        
         override fun getRunnables() = runnables
         override fun getExecutedRunnables() = executedRunnables
-
-        override fun runOnUiThread(runnable: Runnable?) {
-            TODO("Not yet implemented")
-        }
-
-        override fun startActivity(intent: Intent?) {
-            TODO("Not yet implemented")
-        }
-
-        override fun getLifecycleListeners(): SnapshotArray<LifecycleListener?>? {
-            TODO("Not yet implemented")
-        }
-
         override fun getApplicationWindow() = context.window
         override fun getWindowManager() = context.windowManager
 
         override fun useImmersiveMode(b: Boolean) {}
-
-        override fun createAudio(
-            context: Context?,
-            config: AndroidApplicationConfiguration?
-        ): AndroidAudio? {
-            TODO("Not yet implemented")
-        }
 
         override fun createInput(
             activity: Application?,
             context: Context?,
             view: Any?,
             config: AndroidApplicationConfiguration?
-        ): AndroidInput? {
-            return DefaultAndroidInput(this, context, graphics.view, config)
-        }
+        ) = DefaultAndroidInput(this, context, graphics.view, config)
 
-        override fun getNet(): Net? {
-            TODO("Not yet implemented")
-        }
 
+        override fun getAudio() = throw UnsupportedOperationException()
+        override fun runOnUiThread(runnable: Runnable?) = throw UnsupportedOperationException()
+        override fun startActivity(intent: Intent?) = throw UnsupportedOperationException()
+        override fun getLifecycleListeners() = throw UnsupportedOperationException()
+        override fun getNet() = throw UnsupportedOperationException()
+        override fun exit() {}
+        
         override fun log(tag: String?, message: String?) {
             Log.i(tag, message.toString())
         }
@@ -105,6 +79,11 @@ fun GdxView(
             Log.d(tag, message.toString())
         }
 
+        override fun createAudio(
+            context: Context?,
+            config: AndroidApplicationConfiguration?
+        ) = throw UnsupportedOperationException()
+        
         override fun debug(tag: String?, message: String?, exception: Throwable?) {
             TODO("Not yet implemented")
         }
@@ -148,10 +127,6 @@ fun GdxView(
         }
 
         override fun postRunnable(runnable: Runnable?) {
-            TODO("Not yet implemented")
-        }
-
-        override fun exit() {
             TODO("Not yet implemented")
         }
 

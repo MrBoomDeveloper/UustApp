@@ -1,0 +1,10 @@
+[
+  {
+    "type": "image",
+    "path": "map.png",
+    "scale_x": 100,
+    "scale_y": 100,
+    "position_x": 0,
+    "position_y": 0
+  }
+]

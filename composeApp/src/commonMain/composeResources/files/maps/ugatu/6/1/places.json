@@ -1,0 +1,14 @@
+[
+  {
+    "number": 101,
+    "name": "Аудитория 101",
+    "position_x": 0,
+    "position_y": 0
+  },
+  {
+    "number": 102,
+    "name": "Аудитория 102",
+    "position_x": 0,
+    "position_y": 50
+  }
+]

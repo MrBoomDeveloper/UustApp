@@ -115,13 +115,4 @@ private class AndroidLocationManager(
             delay(1000)
         }
     }
-    
-//    override suspend fun updateState() {
-//        _isEnabledFlow.emit(LocationManagerCompat.isLocationEnabled(locationManager))
-//        
-//        _isPreciseFlow.emit(ContextCompat.checkSelfPermission(
-//            context, 
-//            Manifest.permission.ACCESS_FINE_LOCATION
-//        ) == PackageManager.PERMISSION_GRANTED)
-//    }
 }

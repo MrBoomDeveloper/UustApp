@@ -27,8 +27,9 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
-import com.mrboomdev.uust.navigation.AppTabs
-import com.mrboomdev.uust.navigation.Routes
+import com.mrboomdev.uust.ui.UustTheme
+import com.mrboomdev.uust.ui.navigation.AppTabs
+import com.mrboomdev.uust.ui.navigation.Routes
 import com.mrboomdev.uust.utils.add
 import com.mrboomdev.uust.utils.iterateIndexed
 import kotlinx.coroutines.launch
@@ -69,16 +70,16 @@ fun App(initialRoute: Routes) {
         val backStacks by rememberSerializable<MutableMap<Int, MutableList<Routes>>> {
             mutableStateOf(mutableMapOf())
         }
-        
+
         backStacks.getBackStack(
             index = 0,
             initDefault = false
-        ).apply { 
+        ).apply {
             if(isEmpty()) {
                 add(initialRoute)
             }
         }
-        
+
         Row(Modifier.fillMaxSize()) {
             if(useRail) {
                 Box {
@@ -86,10 +87,10 @@ fun App(initialRoute: Routes) {
                         containerColor = if(useRail) {
                             MaterialTheme.colorScheme.surface
                         } else MaterialTheme.colorScheme.background,
-                        
+
                         header = {
                             val backStack = backStacks.getBackStack(pagerState.currentPage)
-                            
+
                             Crossfade(
                                 modifier = Modifier
                                     .padding(vertical = 16.dp)
@@ -101,7 +102,7 @@ fun App(initialRoute: Routes) {
                                 if(canPop) {
                                     FilledIconButton(
                                         shape = RoundedCornerShape(8.dp),
-                                        
+
                                         onClick = {
                                             if(backStack.size <= 1) return@FilledIconButton
                                             backStack.removeLastOrNull()
@@ -126,17 +127,17 @@ fun App(initialRoute: Routes) {
                                             interactionSource = null,
                                             indication = null,
                                             onClick = {
-                                                backStacks.getBackStack(0).apply { 
+                                                backStacks.getBackStack(0).apply {
                                                     clear()
                                                     add(Routes.Home)
                                                 }
-                                                
-                                                coroutineScope.launch { 
+
+                                                coroutineScope.launch {
                                                     pagerState.animateScrollToPage(0)
                                                 }
                                             }
                                         ),
-                                    
+
                                     painter = painterResource(Res.drawable.logo),
                                     tint = MaterialTheme.colorScheme.primary,
                                     contentDescription = null
@@ -147,7 +148,7 @@ fun App(initialRoute: Routes) {
                         AppTabs.entries.forEachIndexed { index, tab ->
                             NavigationRailItem(
                                 selected = pagerState.currentPage == index,
-                                
+
                                 label = {
                                     Text(
                                         text = tab.title
@@ -157,9 +158,11 @@ fun App(initialRoute: Routes) {
                                 icon = {
                                     Icon(
                                         modifier = Modifier.size(32.dp),
-                                        painter = painterResource(if(pagerState.currentPage == index) {
-                                            tab.activeIcon
-                                        } else tab.icon),
+                                        painter = painterResource(
+                                            if(pagerState.currentPage == index) {
+                                                tab.activeIcon
+                                            } else tab.icon
+                                        ),
                                         contentDescription = null,
                                     )
                                 },
@@ -180,14 +183,14 @@ fun App(initialRoute: Routes) {
                     )
                 }
             }
-            
+
             Scaffold(
                 modifier = Modifier
                     .weight(1f)
                     .nestedScroll(topAppBarBehavior.nestedScrollConnection)
                     .nestedScroll(bottomAppBarBehavior.nestedScrollConnection),
 
-                contentWindowInsets = WindowInsets.safeDrawing.union(WindowInsets.mandatorySystemGestures).let { 
+                contentWindowInsets = WindowInsets.safeDrawing.union(WindowInsets.mandatorySystemGestures).let {
                     if(useRail) {
                         it.only(WindowInsetsSides.Vertical + WindowInsetsSides.End).add(left = 16.dp)
                     } else it
@@ -219,17 +222,17 @@ fun App(initialRoute: Routes) {
                     AnimatedVisibility(
                         visible = !useRail && backStacks.getBackStack(
                             index = pagerState.currentPage
-                        ).lastOrNull().let { 
+                        ).lastOrNull().let {
                             when(it) {
                                 is Routes.Calendar -> false
-                                else -> true 
-                            } 
+                                else -> true
+                            }
                         },
-                        
-                        enter = fadeIn(spring(stiffness = Spring.StiffnessVeryLow)) + 
+
+                        enter = fadeIn(spring(stiffness = Spring.StiffnessVeryLow)) +
                                 expandVertically(spring(stiffness = Spring.StiffnessVeryLow)),
-                        
-                        exit = fadeOut(spring(stiffness = Spring.StiffnessVeryLow)) + 
+
+                        exit = fadeOut(spring(stiffness = Spring.StiffnessVeryLow)) +
                                 shrinkVertically(spring(stiffness = Spring.StiffnessVeryLow))
                     ) {
                         BottomAppBar(
@@ -239,7 +242,7 @@ fun App(initialRoute: Routes) {
                             AppTabs.entries.forEachIndexed { index, tab ->
                                 NavigationBarItem(
                                     selected = pagerState.currentPage == index,
-                                    
+
                                     label = {
                                         Text(
                                             text = tab.title
@@ -249,9 +252,11 @@ fun App(initialRoute: Routes) {
                                     icon = {
                                         Icon(
                                             modifier = Modifier.size(32.dp),
-                                            painter = painterResource(if(pagerState.currentPage == index) {
-                                                tab.activeIcon
-                                            } else tab.icon),
+                                            painter = painterResource(
+                                                if(pagerState.currentPage == index) {
+                                                    tab.activeIcon
+                                                } else tab.icon
+                                            ),
                                             contentDescription = null,
                                         )
                                     },
@@ -263,7 +268,7 @@ fun App(initialRoute: Routes) {
                                                     backStack.clear()
                                                     backStack.add(AppTabs.entries[index].defaultRoute)
                                                 }
-                                                
+
                                                 backStack.iterateIndexed { index, _ ->
                                                     if (index == 0) {
                                                         return@iterateIndexed
@@ -275,7 +280,7 @@ fun App(initialRoute: Routes) {
                                                 return@NavigationBarItem
                                             }
                                         }
-                                        
+
                                         coroutineScope.launch {
                                             pagerState.animateScrollToPage(index)
                                         }
@@ -301,7 +306,7 @@ fun App(initialRoute: Routes) {
                         NavDisplay(
                             backStack = backStack,
                             onBack = { backStack.removeLastOrNull() },
- 
+
                             entryDecorators = listOf(
                                 rememberSaveableStateHolderNavEntryDecorator(),
                                 rememberViewModelStoreNavEntryDecorator()
@@ -331,7 +336,7 @@ fun App(initialRoute: Routes) {
                         }
                     }
                 }
-                
+
                 if(useRail) {
                     VerticalPager(
                         modifier = Modifier.fillMaxSize(),
@@ -347,7 +352,7 @@ fun App(initialRoute: Routes) {
                         pageContent = { PagerContent(it) }
                     )
                 }
-            } 
+            }
         }
     }
 }
