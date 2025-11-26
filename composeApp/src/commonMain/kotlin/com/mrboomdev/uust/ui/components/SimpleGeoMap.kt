@@ -1,7 +1,12 @@
 package com.mrboomdev.uust.ui.components
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 /**
  * A 2d geolocation-based map used for low budget hardware
@@ -17,5 +22,12 @@ fun SimpleGeoMap(
     originPosition: Pair<Double, Double>,
     myPosition: Pair<Double, Double>? = null
 ) {
-    TODO("Not implemented yet")
+    Text(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center),
+
+        color = Color.Red,
+        text = "SimpleGeoMap not implemented yet!"
+    )
 }

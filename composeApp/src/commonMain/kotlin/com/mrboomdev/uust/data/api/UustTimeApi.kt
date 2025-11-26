@@ -1,6 +1,8 @@
 package com.mrboomdev.uust.data.api
 
+import com.mrboomdev.uust.Platform
 import com.mrboomdev.uust.Uust
+import com.mrboomdev.uust.platform
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.Serializable
@@ -10,7 +12,10 @@ object UustTimeApi {
     suspend fun fetchSchedule(
         // TODO: Add params
     ): List<UustTimeSchedule> = Uust.httpClient.get(
-        "https://dev.uust-time.ru/api/v/852971/schedule/0/9573/semester/241?site=schedule"
+        if(Uust.platform == Platform.WEB) {
+            // Cors policy is blocking api access, so we do use proxy
+            "http://awery.mrboomdev.ru/uustSchedule"
+        } else "https://dev.uust-time.ru/api/v/852971/schedule/0/9573/semester/241?site=schedule"
     ) {
         header("origin", "https://schedule.uust.ru")
     }.let { response ->

@@ -58,12 +58,16 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 class CalendarViewModel: ViewModel() {
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+    
     private val _schedules = MutableStateFlow(emptyList<UustTimeSchedule>())
     val schedules = _schedules.asStateFlow()
 
     init {
         viewModelScope.launch {
             _schedules.emit(UustTimeApi.fetchSchedule())
+            _isLoading.emit(false)
         }
     }
 }
@@ -257,6 +261,16 @@ fun CalendarScreen(
                             )
 
                             return@HorizontalPager
+                        }
+
+                        if(viewModel.isLoading.collectAsState().value) {
+                            LoadingIndicator(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(Alignment.Center)
+                            )
+
+                            return@Column
                         }
 
                         Text(

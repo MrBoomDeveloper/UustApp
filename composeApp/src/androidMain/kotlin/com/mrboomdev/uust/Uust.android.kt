@@ -11,3 +11,6 @@ fun Uust.setContext(context: Context) {
 }
 
 val Uust.context: Context get() = _context!!
+
+actual val Uust.platform: Platform
+    get() = Platform.ANDROID

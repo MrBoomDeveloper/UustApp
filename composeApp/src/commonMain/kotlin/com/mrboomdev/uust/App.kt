@@ -110,6 +110,7 @@ fun App(initialRoute: Routes) {
                             ) { canPop ->
                                 if(canPop) {
                                     FilledIconButton(
+                                        modifier = Modifier.scale(1.25f),
                                         shape = RoundedCornerShape(8.dp),
 
                                         onClick = {

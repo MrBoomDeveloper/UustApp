@@ -14,3 +14,9 @@ object Uust {
         }
     }
 }
+
+expect val Uust.platform: Platform
+
+enum class Platform {
+    ANDROID, WEB
+}

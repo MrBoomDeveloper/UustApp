@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -105,6 +106,7 @@ fun HomeScreen(
 ) {
     val backStack = LocalBackStack.current
     val coroutineScope = rememberCoroutineScope()
+    val windowSize = currentWindowAdaptiveInfo().windowSizeClass
     val isLoadingSchedule by viewModel.isLoading.collectAsState()
     val isScheduleLoadFailed by viewModel.isError.collectAsState()
     var currentTime by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())) }
@@ -415,9 +417,15 @@ fun HomeScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .animateContentSize(),
+
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(end = 32.dp),
                         state = scheduleListState,
-                        flingBehavior = rememberSnapFlingBehavior(lazyListState = scheduleListState, snapPosition = SnapPosition.Start)
+
+                        flingBehavior = rememberSnapFlingBehavior(
+                            lazyListState = scheduleListState,
+                            snapPosition = SnapPosition.Start
+                        )
                     ) {
                         itemsIndexed(
                             key = { index, _ -> index },
