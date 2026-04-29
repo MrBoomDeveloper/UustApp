@@ -47,18 +47,19 @@ sealed interface Routes: NavKey {
     }
 
     @Serializable
+    data object Sdo : Routes {
+        @Composable
+        override fun Content(
+            contentPadding: PaddingValues
+        ) = SdoScreen(contentPadding)
+    }
+
+    @Serializable
     data object Help: Routes {
         @Composable
         override fun Content(
             contentPadding: PaddingValues
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center),
-                text = "This screen isn't done yet!"
-            )
-        }
+        ) = MenuScreen(contentPadding)
     }
 
     @Serializable
@@ -68,6 +69,26 @@ sealed interface Routes: NavKey {
         override fun Content(
             contentPadding: PaddingValues
         ) = CalendarScreen(contentPadding = contentPadding)
+    }
+
+    @Serializable
+    data object Clubs : Routes {
+        override val title = "Клубы"
+
+        @Composable
+        override fun Content(
+            contentPadding: PaddingValues
+        ) = ClubsScreen(contentPadding = contentPadding)
+    }
+
+    @Serializable
+    data object Club : Routes {
+        override val title = "Аматэрасу"
+
+        @Composable
+        override fun Content(
+            contentPadding: PaddingValues
+        ) = ClubScreen(contentPadding = contentPadding)
     }
     
     @Serializable

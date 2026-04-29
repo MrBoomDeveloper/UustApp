@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.TextAutoSize
@@ -44,6 +45,28 @@ import com.mrboomdev.uust.data.api.UustTimeSchedule
 import com.mrboomdev.uust.data.settings.UustSettings
 import com.mrboomdev.uust.data.settings.observeAsState
 import com.mrboomdev.uust.navigate
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.clubs
+import com.mrboomdev.uust.resources.golos_text_medium
+import com.mrboomdev.uust.resources.ic_back
+import com.mrboomdev.uust.resources.ic_close
+import com.mrboomdev.uust.resources.ic_diversity_3
+import com.mrboomdev.uust.resources.ic_error_filled
+import com.mrboomdev.uust.resources.ic_filled
+import com.mrboomdev.uust.resources.ic_football_outlined
+import com.mrboomdev.uust.resources.ic_home_outlined
+import com.mrboomdev.uust.resources.ic_meal_outlined
+import com.mrboomdev.uust.resources.ic_money
+import com.mrboomdev.uust.resources.ic_news_outlined
+import com.mrboomdev.uust.resources.ic_outline
+import com.mrboomdev.uust.resources.ic_school_outlined
+import com.mrboomdev.uust.resources.ic_science_outlined
+import com.mrboomdev.uust.resources.ic_sentiment_very_satisfied_outlined
+import com.mrboomdev.uust.resources.ic_subscriptions_outlined
+import com.mrboomdev.uust.resources.ic_support_outlined
+import com.mrboomdev.uust.resources.ic_table_rows_outlined
+import com.mrboomdev.uust.resources.ic_view_week_outlined
+import com.mrboomdev.uust.resources.monsterrat_italic
 import com.mrboomdev.uust.ui.UustTheme
 import com.mrboomdev.uust.ui.components.*
 import com.mrboomdev.uust.ui.isDarkTheme
@@ -61,7 +84,6 @@ import kotlinx.datetime.*
 import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
-import uust.composeapp.generated.resources.*
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -110,8 +132,32 @@ fun HomeScreen(
     val isLoadingSchedule by viewModel.isLoading.collectAsState()
     val isScheduleLoadFailed by viewModel.isError.collectAsState()
     var currentTime by remember { mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())) }
-    val currentEducationWeek = remember(currentTime) { currentTime.toLocalDate().getEducationWeek() }
+//    val currentEducationWeek = remember(currentTime) { currentTime.toLocalDate().getEducationWeek() }
     val currentDayOfWeek = remember(currentTime) { currentTime.dayOfWeek.ordinal + 1 }
+
+
+    fun getInitialDay(): Int {
+        return 212
+        val daysUntil = firstDateOfEdu.daysUntil(currentTime.toLocalDate())
+        return (daysUntil / 7) * 6 + (daysUntil % 7)
+    }
+
+    val currentEducationWeek = getInitialDay() / 6
+
+//    val pagerState = rememberPagerState(
+//        initialPage = getInitialDay(),
+//        pageCount = { (365.toFloat() / 7 * 6).toInt() }
+//    )
+//
+//    val currentEduDay = remember(currentTime) { getInitialDay() }
+    
+    
+    
+    
+    
+    
+    
+    
 
     val schedules by viewModel.schedules.map { schedules ->
         schedules.filter { schedule ->
@@ -369,7 +415,7 @@ fun HomeScreen(
                         )
                     ),
 
-                    text = "${currentTime.toLocalDate().getEducationWeek()} НЕДЕЛЯ"
+                    text = "${currentEducationWeek} НЕДЕЛЯ"
                 )
             }
         }
@@ -439,7 +485,9 @@ fun HomeScreen(
                             val untilEnding = ((endMinute - currentMinute) * 60L * 1000L).takeIf { it > 0L && it < 80 * 60 * 1000 }
 
                             SchedulePreview(
-                                modifier = Modifier.offset(x = 8.dp).width(250.dp),
+                                modifier = Modifier
+                                    .offset(x = 8.dp)
+                                    .width(250.dp),
                                 outlined = useOutlinedSchedule,
                                 type = schedule.type,
                                 index = schedule.schedule_time_new_id,
@@ -609,151 +657,100 @@ fun HomeScreen(
                 contentType = "ads",
                 span = { GridItemSpan(maxLineSpan) }
             ) {
-                Surface(
+                ClubAds(
+                    onClick = {
+                        backStack += Routes.Clubs
+                    }
+                )
+            }
+        }
+
+        if(false) {
+            item(
+                key = "lunchHeader",
+                contentType = "header",
+                span = { GridItemSpan(maxLineSpan) }
+            ) {
+                CatHeader(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .animateItem(),
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    onClick = {}
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 12.dp),
+                    icon = painterResource(Res.drawable.ic_meal_outlined),
+                    title = "Буфет"
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .height(112.dp)
-                    ) {
-                        Row {
-                            Box(
-                                Modifier
-                                    .fillMaxHeight()
-                                    .aspectRatio(1f)
-                                    .clipToBounds()
-                            ) {
-                                Image(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .rotate(10f)
-                                        .scale(1.2f),
-                                    painter = painterResource(Res.drawable.clubs),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+                    FilledIconButton(
+                        modifier = Modifier.size(32.dp),
+                        shape = RoundedCornerShape(8.dp),
 
-                            Column(
-                                modifier = Modifier
-                                    .padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 12.dp),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Text(
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontFamily = UustTheme.fonts.golos,
-                                    text = "Вступай в клубы!"
-                                )
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        ),
 
-                                Text(
-                                    fontSize = 15.sp,
-                                    fontFamily = UustTheme.fonts.golos,
-                                    overflow = TextOverflow.Ellipsis,
-                                    text = "Проводи свободное время занимаясь любимым делом"
-                                )
-                            }
+                        onClick = {
+//                        backStack += Routes.Calendar
                         }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)
+                                .scale(scaleX = -1f, scaleY = 1f),
 
-//                    IconButton(
-//                        onClick = {}
-//                    ) {
-//                        Icon(
-//                            painter = painterResource(Res.drawable.clos)
-//                        )
-//                    }
+                            painter = painterResource(Res.drawable.ic_back),
+                            contentDescription = null
+                        )
                     }
                 }
             }
         }
-        
-        item(
-            key = "lunchHeader",
-            contentType = "header",
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
-            CatHeader(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 12.dp),
-                icon = painterResource(Res.drawable.ic_meal_outlined),
-                title = "Буфет"
+
+        if(false) {
+            item(
+                key = "lunchMenu",
+                contentType = "lunchMenu",
+                span = { GridItemSpan(maxLineSpan) }
             ) {
-                FilledIconButton(
-                    modifier = Modifier.size(32.dp),
-                    shape = RoundedCornerShape(8.dp),
-
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        contentColor = MaterialTheme.colorScheme.primary
-                    ),
-
-                    onClick = {
-//                        backStack += Routes.Calendar
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp)
-                            .scale(scaleX = -1f, scaleY = 1f),
+                    LunchItem(
+                        image = "https://www.nicepng.com/png/full/17-172203_free-png-sandwich-png-images-transparent-sandwich-hd.png",
+                        imageScale = .75f,
+                        name = "Сэндвич",
+                        price = "140 руб",
+                        onClick = {}
+                    )
 
-                        painter = painterResource(Res.drawable.ic_back),
-                        contentDescription = null
+                    LunchItem(
+                        image = "https://www.afina-market.ru/upload/iblock/90d/476l2f64w0v3snnirx2szv9epoj89s3c.png",
+                        imageScale = .75f,
+                        name = "Курник",
+                        price = "75 руб",
+                        onClick = {}
+                    )
+
+                    LunchItem(
+                        image = "data:image/jpeg;base64,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",
+                        imageScale = .9f,
+                        name = "Компот",
+                        price = "80 руб",
+                        onClick = {}
+                    )
+
+                    LunchItem(
+                        image = "https://new.lyubimiigorod.ru/images/catalog/6540d4a206cdf.png",
+                        imageScale = .8f,
+                        name = "Мини пицца",
+                        price = "120 руб",
+                        onClick = {}
                     )
                 }
             }
-        }
-
-        item(
-            key = "lunchMenu",
-            contentType = "lunchMenu",
-            span = { GridItemSpan(maxLineSpan) }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                LunchItem(
-                    image = "https://www.nicepng.com/png/full/17-172203_free-png-sandwich-png-images-transparent-sandwich-hd.png",
-                    imageScale = .75f,
-                    name = "Сэндвич",
-                    price = "140 руб",
-                    onClick = {}
-                )
-
-                LunchItem(
-                    image = "https://www.afina-market.ru/upload/iblock/90d/476l2f64w0v3snnirx2szv9epoj89s3c.png",
-                    imageScale = .75f,
-                    name = "Курник",
-                    price = "75 руб",
-                    onClick = {}
-                )
-
-                LunchItem(
-                    image = "data:image/jpeg;base64,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",
-                    imageScale = .9f,
-                    name = "Компот",
-                    price = "80 руб",
-                    onClick = {}
-                )
-
-                LunchItem(
-                    image = "https://new.lyubimiigorod.ru/images/catalog/6540d4a206cdf.png",
-                    imageScale = .8f,
-                    name = "Мини пицца",
-                    price = "120 руб",
-                    onClick = {}
-                )
-            } 
         }
 
         item(

@@ -10,8 +10,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.mrboomdev.uust.data.settings.UustSettings
 import com.mrboomdev.uust.data.settings.observeAsState
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.golos_text_black
+import com.mrboomdev.uust.resources.golos_text_bold
+import com.mrboomdev.uust.resources.golos_text_medium
+import com.mrboomdev.uust.resources.golos_text_regular
 import org.jetbrains.compose.resources.Font
-import uust.composeapp.generated.resources.*
 
 @Composable
 fun isDarkTheme(): Boolean {

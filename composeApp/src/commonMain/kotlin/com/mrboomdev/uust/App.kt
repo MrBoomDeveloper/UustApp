@@ -27,6 +27,11 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowSizeClass
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.golos_text_bold
+import com.mrboomdev.uust.resources.ic_account
+import com.mrboomdev.uust.resources.ic_back
+import com.mrboomdev.uust.resources.logo
 import com.mrboomdev.uust.ui.UustTheme
 import com.mrboomdev.uust.ui.navigation.AppTabs
 import com.mrboomdev.uust.ui.navigation.Routes
@@ -35,7 +40,6 @@ import com.mrboomdev.uust.utils.iterateIndexed
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
-import uust.composeapp.generated.resources.*
 
 val LocalBackStack = compositionLocalOf<MutableList<Routes>> { 
     throw NotImplementedError("You didn't provide LocalBackStack!")

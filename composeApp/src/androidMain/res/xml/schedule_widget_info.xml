@@ -1,0 +1,12 @@
+<appwidget-provider
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:updatePeriodMillis="60000"
+        android:widgetFeatures="configuration_optional|reconfigurable"
+        android:widgetCategory="home_screen|keyguard|not_keyguard"
+        android:initialLayout="@layout/glance_default_loading_layout"
+        android:minResizeWidth="200dp"
+        android:minResizeHeight="200dp"
+        android:minWidth="300dp"
+        android:minHeight="400dp"
+        tools:targetApi="28"/>

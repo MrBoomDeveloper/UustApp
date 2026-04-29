@@ -15,11 +15,11 @@ object UustTimeApi {
         if(Uust.platform == Platform.WEB) {
             // Cors policy is blocking api access, so we do use proxy
             "http://awery.mrboomdev.ru/uustSchedule"
-        } else "https://dev.uust-time.ru/api/v/852971/schedule/0/9573/semester/241?site=schedule"
+        } else "https://dev.uust-time.ru/api/v/852972/schedule/0/9573/semester/241?site=schedule"
     ) {
         header("origin", "https://schedule.uust.ru")
     }.let { response ->
-        Json.decodeFromString(response.bodyAsText())
+        Json.decodeFromString(response.bodyAsText().also { println(it) })
     }
 }
 

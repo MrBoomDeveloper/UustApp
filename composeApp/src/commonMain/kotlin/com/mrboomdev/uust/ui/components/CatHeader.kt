@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.golos_text_medium
 import org.jetbrains.compose.resources.Font
-import uust.composeapp.generated.resources.Res
-import uust.composeapp.generated.resources.golos_text_medium
 
 @Composable
 fun CatHeader(

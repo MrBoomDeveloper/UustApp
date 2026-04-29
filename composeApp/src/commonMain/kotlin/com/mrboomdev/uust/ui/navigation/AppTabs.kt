@@ -1,7 +1,15 @@
 package com.mrboomdev.uust.ui.navigation
 
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.ic_explore_filled
+import com.mrboomdev.uust.resources.ic_explore_outlined
+import com.mrboomdev.uust.resources.ic_help_outlined
+import com.mrboomdev.uust.resources.ic_home_filled
+import com.mrboomdev.uust.resources.ic_home_outlined
+import com.mrboomdev.uust.resources.ic_menu
+import com.mrboomdev.uust.resources.ic_school_filled
+import com.mrboomdev.uust.resources.ic_school_outlined
 import org.jetbrains.compose.resources.DrawableResource
-import uust.composeapp.generated.resources.*
 
 enum class AppTabs(
     val title: String,
@@ -10,22 +18,29 @@ enum class AppTabs(
     val defaultRoute: Routes
 ) {
     HOME(
-        title = "Главная",
+        title = "Лента",
         icon = Res.drawable.ic_home_outlined,
         activeIcon = Res.drawable.ic_home_filled,
         defaultRoute = Routes.Home
     ),
 
     NAVIGATION(
-        title = "Навигация",
+        title = "Карта",
         icon = Res.drawable.ic_explore_outlined,
         activeIcon = Res.drawable.ic_explore_filled,
         defaultRoute = Routes.Navigation
     ),
 
+    SDO(
+        title = "СЭО",
+        icon = Res.drawable.ic_school_outlined,
+        activeIcon = Res.drawable.ic_school_filled,
+        defaultRoute = Routes.Sdo
+    ),
+
     INFO(
-        title = "Инфо",
-        icon = Res.drawable.ic_help_outlined,
+        title = "Меню",
+        icon = Res.drawable.ic_menu,
         defaultRoute = Routes.Help
     )
 }

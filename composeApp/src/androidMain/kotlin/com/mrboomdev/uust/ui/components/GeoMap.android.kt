@@ -26,9 +26,8 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.ScreenUtils
 import com.mrboomdev.uust.utils.GdxView
 
-
 @Suppress("NOTHING_TO_INLINE")
-private inline fun Double.asGameCoordinate() = (this * 10000).toFloat()
+private inline fun Double.asGameCoordinate() = (this * 1000000).toFloat()
 
 @Composable
 actual fun GeoMap(
@@ -78,11 +77,11 @@ actual fun GeoMap(
                     transform.setToRotation(Vector3.Y, 90f)
                     transform.rotate(Vector3.X, -15f)
 
-                    transform.setTranslation(
-                        originPosition.first.asGameCoordinate(),
-                        6f,
-                        originPosition.second.asGameCoordinate()
-                    )
+//                    transform.setTranslation(
+//                        originPosition.first.asGameCoordinate(),
+//                        6f,
+//                        originPosition.second.asGameCoordinate()
+//                    )
                 }
 
                 floorModel = ModelBuilder().createBox(
@@ -91,13 +90,7 @@ actual fun GeoMap(
                         floorTexture = it
                     })),
                     (VertexAttributes.Usage.Position or VertexAttributes.Usage.Normal or VertexAttributes.Usage.TextureCoordinates).toLong()
-                ).let { ModelInstance(it) }.apply {
-                    transform.setTranslation(
-                        originPosition.first.asGameCoordinate(),
-                        0f,
-                        originPosition.second.asGameCoordinate()
-                    )
-                }
+                ).let { ModelInstance(it) }
 
                 camera = PerspectiveCamera(
                     67f,
@@ -202,8 +195,8 @@ actual fun GeoMap(
                             // Drag camera
                             thisGame.myPosition.also { oldPosition ->
                                 thisGame.myPosition = oldPosition.copy(
-                                    first = oldPosition.first - (screenX - this.lastX) / 100000.0,
-                                    second = oldPosition.second - (screenY - this.lastY) / 100000.0
+                                    first = oldPosition.first - (screenX - this.lastX) / 10000000.0,
+                                    second = oldPosition.second - (screenY - this.lastY) / 10000000.0
                                 )
                             }
 
@@ -232,13 +225,17 @@ actual fun GeoMap(
 
             private fun update() {
                 this.myPosition.also { position ->
+                    val wasMyPosition = myModel.transform.getTranslation(Vector3())
+                    val relativeX = (position.first - this.originPosition.first).asGameCoordinate()
+                    val relativeY = (position.second - this.originPosition.second).asGameCoordinate()
+                     
                     myModel.transform.setToRotation(Vector3.Y, 90f)
                     myModel.transform.rotate(Vector3.Z, -15f)
 
                     myModel.transform.setTranslation(
-                        position.first.asGameCoordinate(),
+                        relativeX + (wasMyPosition.x - relativeX) * 0.05f,
                         playerAnimationProgress,
-                        position.second.asGameCoordinate()
+                        relativeY + (wasMyPosition.y - relativeY) * 0.05f
                     )
                 }
 

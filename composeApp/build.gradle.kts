@@ -28,11 +28,11 @@ kotlin {
 //        }
 //    }
 
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//        binaries.executable()
+//    }
 
     sourceSets {
         commonMain.dependencies {
@@ -87,28 +87,40 @@ kotlin {
                 implementation(libs.android.splashscreen)
                 implementation("com.google.android.gms:play-services-location:21.3.0")
 
+                // Widgets
+                implementation(libs.androidx.glance.appwidget)
+                implementation(libs.androidx.glance.material3)
+
                 val gdxVersion = "1.14.0"
-                implementation("com.badlogicgames.gdx:gdx:${gdxVersion}")
-                implementation("com.badlogicgames.gdx:gdx-backend-android:${gdxVersion}")
+                implementation(libs.gdx)
+                implementation(libs.gdx.backend.android)
             }
         }
 
 //        iosMain {
 //            dependsOn(mobileMain)
 //        }
-        
-        webMain.dependencies {
-            implementation(libs.settings.makeobservable)
-            implementation(libs.ktor.client.js)
-        }
-        
-        wasmJsMain.dependencies {
-            implementation("com.github.zakgof:korender:0.5.1")
-        }
+
+//        webMain.dependencies {
+//            implementation(libs.settings.makeobservable)
+//            implementation(libs.ktor.client.js)
+//        }
+//        
+//        wasmJsMain.dependencies {
+//            implementation("com.github.zakgof:korender:0.5.1")
+//        }
         
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+    }
+}
+
+compose {
+    resources {
+        publicResClass = true
+        generateResClass = always
+        packageOfResClass = "com.mrboomdev.uust.resources"
     }
 }
 
@@ -156,8 +168,4 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
 }

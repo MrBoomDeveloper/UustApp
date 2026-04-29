@@ -16,10 +16,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.golos_text_bold
+import com.mrboomdev.uust.resources.golos_text_regular
 import org.jetbrains.compose.resources.Font
-import uust.composeapp.generated.resources.Res
-import uust.composeapp.generated.resources.golos_text_bold
-import uust.composeapp.generated.resources.golos_text_regular
 
 @Composable
 fun LunchItem(

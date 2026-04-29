@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
+            android:name=".UustApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -25,6 +26,29 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-    </application>
 
+        <receiver android:name=".ui.widgets.ScheduleWidget"
+                  android:label="Расписание занятий"
+                  android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/schedule_widget_info"/>
+        </receiver>
+
+        <receiver android:name=".ui.widgets.TimerWidget"
+                  android:label="Таймер текущего занятия"
+                  android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/timer_widget_info"/>
+        </receiver>
+    </application>
 </manifest>

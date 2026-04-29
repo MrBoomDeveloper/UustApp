@@ -11,9 +11,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.golos_text_bold
+import com.mrboomdev.uust.resources.golos_text_medium
+import com.mrboomdev.uust.resources.golos_text_regular
+import com.mrboomdev.uust.resources.ic_warning_filled
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
-import uust.composeapp.generated.resources.*
 
 @Composable
 fun WarningScreen(

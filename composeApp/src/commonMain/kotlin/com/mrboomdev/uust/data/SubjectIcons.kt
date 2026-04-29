@@ -1,8 +1,15 @@
 package com.mrboomdev.uust.data
 
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.ic_3d_outlined
+import com.mrboomdev.uust.resources.ic_binary
+import com.mrboomdev.uust.resources.ic_code
+import com.mrboomdev.uust.resources.ic_football_outlined
+import com.mrboomdev.uust.resources.ic_function
+import com.mrboomdev.uust.resources.ic_history_edu_outlined
+import com.mrboomdev.uust.resources.ic_robot_filled
+import com.mrboomdev.uust.resources.ic_robot_outlined
 import org.jetbrains.compose.resources.DrawableResource
-import uust.composeapp.generated.resources.*
-
 data class SubjectIcon(
     val icon: DrawableResource,
     val activeIcon: DrawableResource = icon,

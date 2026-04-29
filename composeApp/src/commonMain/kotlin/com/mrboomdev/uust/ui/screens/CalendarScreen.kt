@@ -31,6 +31,11 @@ import com.mrboomdev.uust.data.api.UustTimeSchedule
 import com.mrboomdev.uust.data.settings.UustSettings
 import com.mrboomdev.uust.data.settings.observeAsState
 import com.mrboomdev.uust.navigate
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.golos_text_bold
+import com.mrboomdev.uust.resources.golos_text_medium
+import com.mrboomdev.uust.resources.ic_back
+import com.mrboomdev.uust.resources.ic_undo
 import com.mrboomdev.uust.ui.UustTheme
 import com.mrboomdev.uust.ui.components.Holiday
 import com.mrboomdev.uust.ui.components.ScheduleItemProgress
@@ -50,7 +55,6 @@ import kotlinx.datetime.format.char
 import nl.jacobras.humanreadable.HumanReadable
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
-import uust.composeapp.generated.resources.*
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.time.Clock
@@ -73,18 +77,14 @@ class CalendarViewModel: ViewModel() {
 }
 
 @OptIn(ExperimentalTime::class)
-private val initDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+val initDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
 @OptIn(ExperimentalTime::class)
-private val firstDateOfEdu = if(initDate.month >= Month.SEPTEMBER) {
+val firstDateOfEdu = if(initDate.month >= Month.SEPTEMBER) {
     LocalDate(initDate.year, Month.SEPTEMBER, 1)
 } else LocalDate(initDate.year - 1, Month.SEPTEMBER, 1)
 
-private val lastDateOfEdu = if(initDate.month >= Month.SEPTEMBER) {
-    LocalDate(initDate.year + 1, Month.SEPTEMBER, 1)
-} else LocalDate(initDate.year, Month.SEPTEMBER, 1)
-
-private const val MAX_MILLIS_OF_DAY = 86400L * 1000000000L - 1
+const val MAX_MILLIS_OF_DAY = 86400L * 1000000000L - 1
 
 @OptIn(ExperimentalTime::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -204,7 +204,8 @@ fun CalendarScreen(
                         .fillMaxSize()
                         .ifThen(schedules.isNotEmpty()) {
                             verticalScroll(rememberScrollState())
-                        }.padding(contentPadding.exclude(top = true))
+                        }
+                        .padding(contentPadding.exclude(top = true))
                         .padding(bottom = toolbarHeight)
                 ) {
                     Text(

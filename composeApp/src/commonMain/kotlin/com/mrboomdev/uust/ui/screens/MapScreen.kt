@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.ic_location_filled
 import com.mrboomdev.uust.ui.UustTheme
 import com.mrboomdev.uust.ui.components.GeoMap
 import com.mrboomdev.uust.ui.dialogs.LocationDialog
@@ -20,8 +22,6 @@ import com.mrboomdev.uust.utils.permissions.rememberPermissionController
 import com.mrboomdev.uust.utils.rememberLocationManager
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
-import uust.composeapp.generated.resources.Res
-import uust.composeapp.generated.resources.ic_location_filled
 
 @Composable
 fun MapScreen(
@@ -64,7 +64,7 @@ fun MapScreen(
                 .background(Color.Black),
 
             originPosition = remember {
-                54.8178296 to 56.0833728
+                54.7249757 to 55.9410063
             },
 
             myPosition = location

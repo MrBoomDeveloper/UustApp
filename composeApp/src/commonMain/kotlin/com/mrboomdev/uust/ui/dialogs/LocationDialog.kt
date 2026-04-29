@@ -8,6 +8,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mrboomdev.uust.data.University
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.ic_close
 import com.mrboomdev.uust.ui.UustTheme
 import com.mrboomdev.uust.ui.components.OutlinedTextPicker
 import com.mrboomdev.uust.ui.components.TextPickerItem
@@ -16,8 +18,6 @@ import com.mrboomdev.uust.utils.permissions.PermissionRequestResult
 import com.mrboomdev.uust.utils.permissions.rememberPermissionController
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import uust.composeapp.generated.resources.Res
-import uust.composeapp.generated.resources.ic_close
 
 object LocationDialogDefaults {
     val LIVE_LOCATION = -1.0 to -1.0

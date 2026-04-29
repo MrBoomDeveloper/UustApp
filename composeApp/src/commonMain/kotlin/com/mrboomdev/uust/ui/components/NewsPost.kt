@@ -13,13 +13,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.golos_text_medium
+import com.mrboomdev.uust.resources.golos_text_regular
 import com.mrboomdev.uust.ui.UustTheme
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
-import uust.composeapp.generated.resources.Res
-import uust.composeapp.generated.resources.golos_text_medium
-import uust.composeapp.generated.resources.golos_text_regular
 
 @Composable
 fun NewsPost(

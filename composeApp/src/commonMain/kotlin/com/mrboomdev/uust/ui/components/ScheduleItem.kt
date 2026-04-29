@@ -19,16 +19,25 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mrboomdev.uust.data.SubjectIcons
+import com.mrboomdev.uust.resources.Res
+import com.mrboomdev.uust.resources.golos_text_bold
+import com.mrboomdev.uust.resources.golos_text_regular
+import com.mrboomdev.uust.resources.ic_clock_outlined
+import com.mrboomdev.uust.resources.ic_location_outlined
+import com.mrboomdev.uust.resources.ic_notes
+import com.mrboomdev.uust.resources.ic_person_outlined
+import com.mrboomdev.uust.ui.isDarkTheme
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
-import uust.composeapp.generated.resources.*
 
 data class ScheduleItemType(
     val darkColor: Color,
     val lightColor: Color = darkColor
 ) {
     @Composable
-    fun getColor() = if(isSystemInDarkTheme()) darkColor else lightColor
+    fun getColor() = if(isDarkTheme()) {
+        darkColor
+    } else lightColor
 }
 
 val scheduleItemTypes = mapOf(
