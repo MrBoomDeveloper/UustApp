@@ -1,18 +1,19 @@
 package com.mrboomdev.uust.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mrboomdev.uust.resources.Res
-import com.mrboomdev.uust.resources.ic_location_filled
+import com.mrboomdev.uust.resources.ic_search
 import com.mrboomdev.uust.ui.UustTheme
 import com.mrboomdev.uust.ui.components.GeoMap
 import com.mrboomdev.uust.ui.dialogs.LocationDialog
@@ -70,15 +71,46 @@ fun MapScreen(
             myPosition = location
         )
 
-        Text(
-            "Current location: ${
-            when {
-                !hasLocationPermission -> "No permission granted!"
-                !locationManager.isEnabledFlow.collectAsState().value -> "Not enabled!"
-                !locationManager.isPreciseFlow.collectAsState().value -> "Not precise!"
-                else -> location?.let { "${it.first}, ${it.second}" } ?: "Unknown"
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(16.dp)
+        ) {
+            for(i in 1..5) {
+                Button(
+                    modifier = Modifier
+                        .width(40.dp)
+                        .border(1.dp, if(i == 1) Color.White else Color.Black, RoundedCornerShape(8.dp)),
+                    
+                    contentPadding = PaddingValues(8.dp),
+                    shape = RoundedCornerShape(8.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if(i == 1) Color.Black else Color.White,
+                        contentColor = if(i == 1) Color.White else Color.Black
+                    ),
+
+                    onClick = {
+
+                    }
+                ) {
+                    Text(
+                        fontWeight = FontWeight.Bold,
+                        text = i.toString()
+                    )
+                }
             }
-        }", color = Color.Green)
+        }
+
+//        Text(
+//            "Current location: ${
+//            when {
+//                !hasLocationPermission -> "No permission granted!"
+//                !locationManager.isEnabledFlow.collectAsState().value -> "Not enabled!"
+//                !locationManager.isPreciseFlow.collectAsState().value -> "Not precise!"
+//                else -> location?.let { "${it.first}, ${it.second}" } ?: "Unknown"
+//            }
+//        }", color = Color.Green)
 
         ExtendedFloatingActionButton(
             modifier = Modifier
@@ -88,7 +120,7 @@ fun MapScreen(
             icon = {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(Res.drawable.ic_location_filled),
+                    painter = painterResource(Res.drawable.ic_search),
                     contentDescription = null
                 )
             },
@@ -96,7 +128,7 @@ fun MapScreen(
             text = {
                 Text(
                     fontFamily = UustTheme.fonts.golos,
-                    text = "Мое местоположение"
+                    text = "Поиск"
                 )
             },
 
